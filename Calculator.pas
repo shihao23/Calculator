@@ -1,0 +1,198 @@
+unit Calculator;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls;
+
+type
+  TForm1 = class(TForm)
+    btnPct: TButton;
+    btnCE: TButton;
+    btnC: TButton;
+    btnBS: TButton;
+    btnFrac: TButton;
+    btnSq: TButton;
+    btnSqrt: TButton;
+    btnDiv: TButton;
+    btn7: TButton;
+    btn8: TButton;
+    btn9: TButton;
+    btnMul: TButton;
+    btn4: TButton;
+    btn5: TButton;
+    btn6: TButton;
+    btnSub: TButton;
+    btn1: TButton;
+    btn2: TButton;
+    btn3: TButton;
+    btnAdd: TButton;
+    btnPM: TButton;
+    btn0: TButton;
+    btnPoint: TButton;
+    btnEq: TButton;
+    txtResult: TEdit;
+    GridPanel1: TGridPanel;
+    procedure btnNumberClick(Sender: TObject);
+    procedure btnOperatorClick(Sender: TObject);
+    procedure btnEqualClick(Sender: TObject);
+    procedure btnCClick(Sender: TObject);
+    procedure btnCEClick(Sender: TObject);
+    procedure btnBSClick(Sender: TObject);
+    procedure btnSqrtClick(Sender: TObject);
+    procedure btnSqClick(Sender: TObject);
+    procedure btnFracClick(Sender: TObject);
+    procedure btnPMClick(Sender: TObject);
+    procedure btnPctClick(Sender: TObject);
+  private
+    { Private declarations }
+    FOperator: string;   // 存放運算符號 (+, -, *, /)
+    FIsNewNum: Boolean;  // 標記接下來輸入的是否為新數字
+    FFirstNum: Double;   // 存放第一個數字
+    SecondNum: Double;   // 存放第二個數字
+    ResultNum: Double;   // 存放運算好的數字
+    Value: Double;       // 存放運算字符
+  public
+    { Public declarations }
+  end;
+
+var
+  Form1: TForm1;
+
+implementation
+
+{$R *.dfm}
+
+//根據按鈕的Caption輸出對應的值
+procedure TForm1.btnNumberClick(Sender: TObject);
+var
+  ClickedText: string;
+begin
+  ClickedText := (Sender as TButton).Caption;
+  // 修正邏輯：如果是新數字標記 (FIsNewNum) 或者是目前的文字是 '0'，就覆蓋掉
+  if (txtResult.Text = '0') or (FIsNewNum) then begin
+    txtResult.Text := ClickedText;
+    FIsNewNum := False; // 重置標記，接下來輸入的數字要用串接的
+  end else begin
+    txtResult.Text := txtResult.Text + ClickedText;
+  end;
+end;
+
+//檢查用戶是用加減乘除的哪個
+procedure TForm1.btnOperatorClick(Sender: TObject);
+begin
+  try
+    FFirstNum := StrToFloat(txtResult.Text);
+    FOperator := (Sender as TButton).Caption;
+    //txtResult.Text := txtResult.Text + ' ' + FOperator;
+    FIsNewNum := True; // 設為 True，讓下一次按數字時知道要換新的一行
+  except
+    on E: EConvertError do ShowMessage('輸入格式錯誤');
+  end;
+end;
+
+//加減乘除的運輸
+procedure TForm1.btnEqualClick(Sender: TObject);
+begin
+  // 防止沒按過運算符號就按等於
+  if FOperator = '' then Exit;
+  try
+    SecondNum := StrToFloat(txtResult.Text);
+  except
+    Exit;
+  end;
+  ResultNum := 0;
+  if FOperator = '+' then ResultNum := FFirstNum + SecondNum;
+  if FOperator = '-' then ResultNum := FFirstNum - SecondNum;
+  if FOperator = '×' then ResultNum := FFirstNum * SecondNum;
+  if FOperator = '÷' then
+  begin
+    if SecondNum <> 0 then ResultNum := FFirstNum / SecondNum
+    else begin
+      ShowMessage('除數不能為 0');
+      txtResult.Text := '0';
+      FIsNewNum := True;
+      Exit;
+    end;
+  end;
+  txtResult.Text := FloatToStr(ResultNum);
+  FOperator := '';   // 清除運算符號，避免重複按等於造成問題
+  FIsNewNum := True; // 計算完畢，下次輸入視為新開頭
+end;
+
+// C 按鈕：全部重置
+procedure TForm1.btnCClick(Sender: TObject);
+begin
+  txtResult.Text := '0';
+  FFirstNum := 0;
+  FOperator := '';
+  FIsNewNum := False;
+end;
+
+// CE 按鈕：只清除目前的顯示數值
+procedure TForm1.btnCEClick(Sender: TObject);
+begin
+  txtResult.Text := '0';
+end;
+
+//返回的功能
+procedure TForm1.btnBSClick(Sender: TObject);
+var
+  S: string;
+begin
+  S := txtResult.Text;
+  // 如果已經是 '0' 或是空的，就不用刪了
+  if (S = '0') or (S = '') then Exit;
+  // 刪除最後一個字元
+  Delete(S, Length(S), 1);
+  // 如果刪完後變空字串，就補回 '0'
+  if S = '' then S := '0';
+  txtResult.Text := S;
+end;
+
+//開根號的運算
+procedure TForm1.btnSqrtClick(Sender: TObject);
+begin
+  txtResult.Text := FloatToStr(Sqrt(StrToFloat(txtResult.Text)));
+  FIsNewNum := True;
+end;
+
+//做平方的運算
+procedure TForm1.btnSqClick(Sender: TObject);
+begin
+  Value := StrToFloat(txtResult.Text);
+  txtResult.Text := FloatToStr(Value * Value);
+  FIsNewNum := True;
+end;
+
+//做1/x的運算
+procedure TForm1.btnFracClick(Sender: TObject);
+begin
+  Value := StrToFloat(txtResult.Text);
+  if Value <> 0 then txtResult.Text := FloatToStr(1 / Value)
+  else ShowMessage('分母不能為零');
+  FIsNewNum := True;
+end;
+
+//做百分百的運算
+procedure TForm1.btnPctClick(Sender: TObject);
+begin
+  Value := StrToFloat(txtResult.Text);
+  txtResult.Text := FloatToStr(Value / 100);
+  FIsNewNum := True; // 運算完後，下一個輸入的數字視為新數字
+end;
+
+ //做正負值的轉換
+procedure TForm1.btnPMClick(Sender: TObject);
+begin
+  // 先轉成數字
+  Value := StrToFloatDef(txtResult.Text, 0);
+  // 如果不是 0，就取負數（0 乘以 -1 還是 0，所以不需要特別判斷 if）
+  if Value <> 0 then
+  begin
+    Value := Value * -1;
+    txtResult.Text := FloatToStr(Value);
+  end;
+end;
+end.
