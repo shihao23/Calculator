@@ -34,6 +34,9 @@ type
     btnEq: TButton;
     txtResult: TEdit;
     GridPanel1: TGridPanel;
+    Panel1: TPanel;
+    Panel2: TPanel;
+    Memo1: TMemo;
     procedure btnNumberClick(Sender: TObject);
     procedure btnOperatorClick(Sender: TObject);
     procedure btnEqualClick(Sender: TObject);
@@ -45,6 +48,7 @@ type
     procedure btnFracClick(Sender: TObject);
     procedure btnPMClick(Sender: TObject);
     procedure btnPctClick(Sender: TObject);
+    procedure FormResize(Sender: TObject);
   private
     { Private declarations }
     FOperator: string;   // 存放運算符號 (+, -, *, /)
@@ -193,6 +197,19 @@ begin
   begin
     Value := Value * -1;
     txtResult.Text := FloatToStr(Value);
+  end;
+end;
+
+procedure TForm1.FormResize(Sender: TObject);
+begin
+  // 假設視窗寬度大於 600 像素時，就顯示歷史紀錄
+  if Self.Width > 600 then begin
+    Panel2.Visible := True;
+    // 如果你有用 Splitter，也要同步顯示
+    Memo1.Visible := True;
+  end else begin
+    Panel2.Visible := False;
+    Memo1.Visible := False;
   end;
 end;
 end.
