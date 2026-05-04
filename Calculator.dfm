@@ -21,7 +21,6 @@ object Form1: TForm1
     BevelOuter = bvNone
     Caption = 'Panel1'
     TabOrder = 0
-    ExplicitWidth = 716
     object GridPanel1: TGridPanel
       Left = 0
       Top = 94
@@ -187,9 +186,6 @@ object Form1: TForm1
         end>
       ShowCaption = False
       TabOrder = 0
-      ExplicitTop = 97
-      ExplicitWidth = 966
-      ExplicitHeight = 710
       object btnPct: TButton
         Left = 1
         Top = 1
@@ -205,8 +201,6 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 0
         OnClick = btnPctClick
-        ExplicitWidth = 241
-        ExplicitHeight = 118
       end
       object btnCE: TButton
         Left = 72
@@ -223,10 +217,6 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 1
         OnClick = btnCEClick
-        ExplicitLeft = 30
-        ExplicitTop = 32
-        ExplicitWidth = 46
-        ExplicitHeight = 6
       end
       object btnC: TButton
         Left = 142
@@ -243,9 +233,6 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 2
         OnClick = btnCClick
-        ExplicitLeft = 483
-        ExplicitWidth = 241
-        ExplicitHeight = 118
       end
       object btnBS: TButton
         Left = 213
@@ -262,9 +249,6 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 3
         OnClick = btnBSClick
-        ExplicitLeft = 724
-        ExplicitWidth = 241
-        ExplicitHeight = 118
       end
       object btnFrac: TButton
         Left = 1
@@ -281,8 +265,6 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 4
         OnClick = btnFracClick
-        ExplicitTop = 119
-        ExplicitWidth = 241
       end
       object btnSq: TButton
         Left = 72
@@ -299,9 +281,6 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 5
         OnClick = btnSqClick
-        ExplicitLeft = 242
-        ExplicitTop = 119
-        ExplicitWidth = 241
       end
       object btnSqrt: TButton
         Left = 142
@@ -318,9 +297,6 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 6
         OnClick = btnSqrtClick
-        ExplicitLeft = 483
-        ExplicitTop = 119
-        ExplicitWidth = 241
       end
       object btnDiv: TButton
         Left = 213
@@ -337,9 +313,6 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 7
         OnClick = btnOperatorClick
-        ExplicitLeft = 724
-        ExplicitTop = 119
-        ExplicitWidth = 241
       end
       object btn7: TButton
         Left = 1
@@ -356,9 +329,6 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 8
         OnClick = btnNumberClick
-        ExplicitTop = 237
-        ExplicitWidth = 241
-        ExplicitHeight = 118
       end
       object btn8: TButton
         Left = 72
@@ -375,10 +345,6 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 9
         OnClick = btnNumberClick
-        ExplicitLeft = 40
-        ExplicitTop = 32
-        ExplicitWidth = 46
-        ExplicitHeight = 7
       end
       object btn9: TButton
         Left = 142
@@ -395,10 +361,6 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 10
         OnClick = btnNumberClick
-        ExplicitLeft = 483
-        ExplicitTop = 237
-        ExplicitWidth = 241
-        ExplicitHeight = 118
       end
       object btnMul: TButton
         Left = 213
@@ -415,10 +377,6 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 11
         OnClick = btnOperatorClick
-        ExplicitLeft = 724
-        ExplicitTop = 237
-        ExplicitWidth = 241
-        ExplicitHeight = 118
       end
       object btn4: TButton
         Left = 1
@@ -435,8 +393,6 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 12
         OnClick = btnNumberClick
-        ExplicitTop = 355
-        ExplicitWidth = 241
       end
       object btn5: TButton
         Left = 72
@@ -453,9 +409,6 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 13
         OnClick = btnNumberClick
-        ExplicitLeft = 242
-        ExplicitTop = 355
-        ExplicitWidth = 241
       end
       object btn6: TButton
         Left = 142
@@ -472,9 +425,6 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 14
         OnClick = btnNumberClick
-        ExplicitLeft = 483
-        ExplicitTop = 355
-        ExplicitWidth = 241
       end
       object btnSub: TButton
         Left = 213
@@ -491,9 +441,6 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 15
         OnClick = btnOperatorClick
-        ExplicitLeft = 724
-        ExplicitTop = 355
-        ExplicitWidth = 241
       end
       object btn1: TButton
         Left = 1
@@ -510,8 +457,6 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 16
         OnClick = btnNumberClick
-        ExplicitTop = 473
-        ExplicitWidth = 241
       end
       object btn2: TButton
         Left = 72
@@ -528,9 +473,6 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 17
         OnClick = btnNumberClick
-        ExplicitLeft = 242
-        ExplicitTop = 473
-        ExplicitWidth = 241
       end
       object btn3: TButton
         Left = 142
@@ -547,9 +489,6 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 18
         OnClick = btnNumberClick
-        ExplicitLeft = 483
-        ExplicitTop = 473
-        ExplicitWidth = 241
       end
       object btnAdd: TButton
         Left = 213
@@ -566,10 +505,6 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 19
         OnClick = btnOperatorClick
-        ExplicitLeft = 137
-        ExplicitTop = 38
-        ExplicitWidth = 45
-        ExplicitHeight = 6
       end
       object btnPM: TButton
         Left = 1
@@ -586,10 +521,6 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 20
         OnClick = btnPMClick
-        ExplicitLeft = -5
-        ExplicitTop = 284
-        ExplicitWidth = 167
-        ExplicitHeight = 56
       end
       object btn0: TButton
         Left = 72
@@ -606,10 +537,6 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 21
         OnClick = btnNumberClick
-        ExplicitLeft = 162
-        ExplicitTop = 284
-        ExplicitWidth = 168
-        ExplicitHeight = 56
       end
       object btnPoint: TButton
         Left = 142
@@ -626,10 +553,6 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 22
         OnClick = btnNumberClick
-        ExplicitLeft = 483
-        ExplicitTop = 591
-        ExplicitWidth = 241
-        ExplicitHeight = 118
       end
       object btnEq: TButton
         Left = 213
@@ -646,10 +569,6 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 23
         OnClick = btnEqualClick
-        ExplicitLeft = 724
-        ExplicitTop = 591
-        ExplicitWidth = 241
-        ExplicitHeight = 118
       end
     end
     object txtResult: TEdit
@@ -668,7 +587,6 @@ object Form1: TForm1
       ParentFont = False
       TabOrder = 1
       Text = '0'
-      ExplicitWidth = 966
     end
   end
   object Panel2: TPanel
@@ -680,7 +598,6 @@ object Form1: TForm1
     Caption = 'Panel2'
     TabOrder = 1
     Visible = False
-    ExplicitLeft = 485
     object Memo1: TMemo
       Left = 1
       Top = 1
@@ -688,10 +605,8 @@ object Form1: TForm1
       Height = 805
       Align = alClient
       Lines.Strings = (
-        'Memo1')
+        #27511#31243#35352#37636)
       TabOrder = 0
-      ExplicitLeft = 5
-      ExplicitTop = 0
     end
   end
 end

@@ -49,6 +49,7 @@ type
     procedure btnPMClick(Sender: TObject);
     procedure btnPctClick(Sender: TObject);
     procedure FormResize(Sender: TObject);
+    procedure UpdateMemo(Num1: Double; Op: string; Num2: Double; Res: Double);
   private
     { Private declarations }
     FOperator: string;   // 存放運算符號 (+, -, *, /)
@@ -57,6 +58,7 @@ type
     SecondNum: Double;   // 存放第二個數字
     ResultNum: Double;   // 存放運算好的數字
     Value: Double;       // 存放運算字符
+    FCurrentProcess: string;
   public
     { Public declarations }
   end;
@@ -87,6 +89,8 @@ end;
 procedure TForm1.btnOperatorClick(Sender: TObject);
 begin
   try
+    // 如果已有運算子，且現在不是剛按完運算子（表示輸入了新數字），就先算中結
+    if (FOperator <> '') and (not FIsNewNum) then btnEqualClick(nil); // 傳 nil 表示這是「連加中結」，不要結束算式
     FFirstNum := StrToFloat(txtResult.Text);
     FOperator := (Sender as TButton).Caption;
     //txtResult.Text := txtResult.Text + ' ' + FOperator;
@@ -120,6 +124,7 @@ begin
       Exit;
     end;
   end;
+  UpdateMemo(FFirstNum, FOperator, SecondNum, ResultNum);
   txtResult.Text := FloatToStr(ResultNum);
   FOperator := '';   // 清除運算符號，避免重複按等於造成問題
   FIsNewNum := True; // 計算完畢，下次輸入視為新開頭
@@ -212,4 +217,13 @@ begin
     Memo1.Visible := False;
   end;
 end;
+
+// 新增一個專門輸出的 Procedure
+procedure TForm1.UpdateMemo(Num1: Double; Op: string; Num2: Double; Res: Double);
+begin
+  if Memo1.Lines.Count = 0 then Memo1.Lines.Add('');
+  // 輸出格式：1 + 2 = 3
+  Memo1.Lines.Add(FloatToStr(Num1) + ' ' + Op + ' ' + FloatToStr(Num2) + ' = ' + FloatToStr(Res));
+end;
+
 end.
