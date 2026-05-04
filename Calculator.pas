@@ -52,6 +52,8 @@ type
     procedure FormResize(Sender: TObject);
     procedure UpdateMemo(Num1: Double; Op: string; Num2: Double; Res: Double);
     procedure UpdateMemoUnary(Op: string; Num: Double; Res: Double);
+    function GetDisplayValue: Double;
+    procedure SetDisplayValue(const AValue: Double);
   private
     { Private declarations }
     FOperator: string;   // 存放運算符號 (+, -, *, /)
@@ -59,8 +61,6 @@ type
     FFirstNum: Double;   // 存放第一個數字
     SecondNum: Double;   // 存放第二個數字
     ResultNum: Double;   // 存放運算好的數字
-    Value: Double;       // 存放運算字符
-    FCurrentProcess: string;
   public
     { Public declarations }
   end;
@@ -93,7 +93,7 @@ begin
   try
     // 如果已有運算子，且現在不是剛按完運算子（表示輸入了新數字），就先算中結
     if (FOperator <> '') and (not FIsNewNum) then btnEqualClick(nil); // 傳 nil 表示這是「連加中結」，不要結束算式
-    FFirstNum := StrToFloat(txtResult.Text);
+    FFirstNum := GetDisplayValue;
     FOperator := (Sender as TButton).Caption;
     //txtResult.Text := txtResult.Text + ' ' + FOperator;
     FIsNewNum := True; // 設為 True，讓下一次按數字時知道要換新的一行
@@ -108,7 +108,7 @@ begin
   // 防止沒按過運算符號就按等於
   if FOperator = '' then Exit;
   try
-    SecondNum := StrToFloat(txtResult.Text);
+    SecondNum := GetDisplayValue;
   except
     Exit;
   end;
@@ -116,18 +116,17 @@ begin
   if FOperator = '+' then ResultNum := FFirstNum + SecondNum;
   if FOperator = '-' then ResultNum := FFirstNum - SecondNum;
   if FOperator = '×' then ResultNum := FFirstNum * SecondNum;
-  if FOperator = '÷' then
-  begin
+  if FOperator = '÷' then begin
     if SecondNum <> 0 then ResultNum := FFirstNum / SecondNum
     else begin
       ShowMessage('除數不能為 0');
-      txtResult.Text := '0';
+      SetDisplayValue(0);
       FIsNewNum := True;
       Exit;
     end;
   end;
   UpdateMemo(FFirstNum, FOperator, SecondNum, ResultNum);
-  txtResult.Text := FloatToStr(ResultNum);
+  SetDisplayValue(ResultNum);
   FOperator := '';   // 清除運算符號，避免重複按等於造成問題
   FIsNewNum := True; // 計算完畢，下次輸入視為新開頭
 end;
@@ -135,7 +134,7 @@ end;
 procedure TForm1.btnCClick(Sender: TObject);
 // C 按鈕：全部重置
 begin
-  txtResult.Text := '0';
+  SetDisplayValue(0);
   FFirstNum := 0;
   FOperator := '';
   FIsNewNum := False;
@@ -144,31 +143,31 @@ end;
 procedure TForm1.btnCEClick(Sender: TObject);
 // CE 按鈕：只清除目前的顯示數值
 begin
-  txtResult.Text := '0';
+  SetDisplayValue(0);
 end;
 
 procedure TForm1.btnBSClick(Sender: TObject);
 //返回的功能
 var
-  S: string;
+  DisplayText: string;
 begin
-  S := txtResult.Text;
+  DisplayText := txtResult.Text;
   // 如果已經是 '0' 或是空的，就不用刪了
-  if (S = '0') or (S = '') then Exit;
+  if (DisplayText = '0') or (DisplayText = '') then Exit;
   // 刪除最後一個字元
-  Delete(S, Length(S), 1);
+  Delete(DisplayText, Length(DisplayText), 1);
   // 如果刪完後變空字串，就補回 '0'
-  if S = '' then S := '0';
-  txtResult.Text := S;
+  if DisplayText = '' then DisplayText := '0';
+  txtResult.Text := DisplayText;
 end;
 
 procedure TForm1.ApplyUnary(OpName: string; Func: TFunc<Double, Double>);
 var
   Value, ResultValue: Double;
 begin
-  Value := StrToFloat(txtResult.Text);
+  Value := GetDisplayValue;
   ResultValue := Func(Value);
-  txtResult.Text := FloatToStr(ResultValue);
+  SetDisplayValue(ResultValue);
   UpdateMemoUnary(OpName, Value, ResultValue);
   FIsNewNum := True;
 end;
@@ -176,7 +175,7 @@ end;
 procedure TForm1.btnSqrtClick(Sender: TObject);
 //開根號的運算
 begin
-  ApplyUnary('Sqr', function(x: Double): Double begin Result := Sqrt(x); end);
+  ApplyUnary('Sqrt', function(x: Double): Double begin Result := Sqrt(x); end);
 end;
 
 procedure TForm1.btnSqrClick(Sender: TObject);
@@ -188,7 +187,12 @@ end;
 procedure TForm1.btnFracClick(Sender: TObject);
 //做(1/x)的運算
 begin
-  ApplyUnary('1 /', function(x: Double): Double begin Result := 1 / x; end);
+  ApplyUnary('1 /', function(x: Double): Double begin if x <> 0 then Result := 1 / x
+                                                      else begin
+                                                           Application.MessageBox('分母不能為零', '錯誤提示', MB_OK + MB_ICONERROR);
+                                                           Result := 0;
+                                                       end;
+                                                end);
 end;
 
 procedure TForm1.btnPctClick(Sender: TObject);
@@ -199,13 +203,15 @@ end;
 
 procedure TForm1.btnPMClick(Sender: TObject);
 //做正負值的轉換
+var
+  Value: Double;
 begin
-  Value := StrToFloatDef(txtResult.Text, 0);
+  Value := GetDisplayValue;
   // 如果不是 0，就取負數（0 乘以 -1 還是 0，所以不需要特別判斷 if）
   if Value <> 0 then
   begin
     Value := Value * -1;
-    txtResult.Text := FloatToStr(Value);
+    SetDisplayValue(Value);
   end;
 end;
 
@@ -234,4 +240,13 @@ begin
   Memo1.Lines.Add(Op + '(' + FloatToStr(Num) + ') = ' + FloatToStr(Res));
 end;
 
+function TForm1.GetDisplayValue: Double;
+begin
+  Result := StrToFloatDef(txtResult.Text, 0);
+end;
+
+procedure TForm1.SetDisplayValue(const AValue: Double);
+begin
+  txtResult.Text := FloatToStr(AValue);
+end;
 end.

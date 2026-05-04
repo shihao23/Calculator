@@ -2,7 +2,7 @@ object Form1: TForm1
   Left = 0
   Top = 0
   Caption = 'Form1'
-  ClientHeight = 807
+  ClientHeight = 648
   ClientWidth = 534
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -16,16 +16,16 @@ object Form1: TForm1
     Left = 0
     Top = 0
     Width = 284
-    Height = 807
+    Height = 648
     Align = alClient
     BevelOuter = bvNone
-    Caption = 'Panel1'
     TabOrder = 0
+    ExplicitHeight = 807
     object GridPanel1: TGridPanel
       Left = 0
-      Top = 94
+      Top = 193
       Width = 284
-      Height = 713
+      Height = 455
       Align = alClient
       Caption = 'GridPanel1'
       ColumnCollection = <
@@ -192,7 +192,7 @@ object Form1: TForm1
         Left = 1
         Top = 1
         Width = 71
-        Height = 119
+        Height = 76
         Align = alClient
         Caption = '%'
         Font.Charset = DEFAULT_CHARSET
@@ -209,7 +209,7 @@ object Form1: TForm1
         Left = 72
         Top = 1
         Width = 70
-        Height = 119
+        Height = 76
         Align = alClient
         Caption = 'CE'
         Font.Charset = DEFAULT_CHARSET
@@ -226,7 +226,7 @@ object Form1: TForm1
         Left = 142
         Top = 1
         Width = 71
-        Height = 119
+        Height = 76
         Align = alClient
         Caption = 'C'
         Font.Charset = DEFAULT_CHARSET
@@ -243,7 +243,7 @@ object Form1: TForm1
         Left = 213
         Top = 1
         Width = 70
-        Height = 119
+        Height = 76
         Align = alClient
         Caption = #61653
         Font.Charset = SYMBOL_CHARSET
@@ -258,9 +258,9 @@ object Form1: TForm1
       end
       object btnFrac: TButton
         Left = 1
-        Top = 120
+        Top = 77
         Width = 71
-        Height = 118
+        Height = 75
         Align = alClient
         Caption = '1'#8260'x'
         Font.Charset = DEFAULT_CHARSET
@@ -276,9 +276,9 @@ object Form1: TForm1
       end
       object btnSqr: TButton
         Left = 72
-        Top = 120
+        Top = 77
         Width = 70
-        Height = 118
+        Height = 75
         Align = alClient
         Caption = 'x^2'
         Font.Charset = DEFAULT_CHARSET
@@ -294,9 +294,9 @@ object Form1: TForm1
       end
       object btnSqrt: TButton
         Left = 142
-        Top = 120
+        Top = 77
         Width = 71
-        Height = 118
+        Height = 75
         Align = alClient
         Caption = #8730'(2&x)'
         Font.Charset = DEFAULT_CHARSET
@@ -312,9 +312,9 @@ object Form1: TForm1
       end
       object btnDiv: TButton
         Left = 213
-        Top = 120
+        Top = 77
         Width = 70
-        Height = 118
+        Height = 75
         Align = alClient
         Caption = #247
         Font.Charset = DEFAULT_CHARSET
@@ -330,9 +330,9 @@ object Form1: TForm1
       end
       object btn7: TButton
         Left = 1
-        Top = 238
+        Top = 152
         Width = 71
-        Height = 119
+        Height = 76
         Align = alClient
         Caption = '7'
         Font.Charset = DEFAULT_CHARSET
@@ -348,9 +348,9 @@ object Form1: TForm1
       end
       object btn8: TButton
         Left = 72
-        Top = 238
+        Top = 152
         Width = 70
-        Height = 119
+        Height = 76
         Align = alClient
         Caption = '8'
         Font.Charset = DEFAULT_CHARSET
@@ -366,9 +366,9 @@ object Form1: TForm1
       end
       object btn9: TButton
         Left = 142
-        Top = 238
+        Top = 152
         Width = 71
-        Height = 119
+        Height = 76
         Align = alClient
         Caption = '9'
         Font.Charset = DEFAULT_CHARSET
@@ -384,9 +384,9 @@ object Form1: TForm1
       end
       object btnMul: TButton
         Left = 213
-        Top = 238
+        Top = 152
         Width = 70
-        Height = 119
+        Height = 76
         Align = alClient
         Caption = #215
         Font.Charset = DEFAULT_CHARSET
@@ -402,9 +402,9 @@ object Form1: TForm1
       end
       object btn4: TButton
         Left = 1
-        Top = 357
+        Top = 228
         Width = 71
-        Height = 118
+        Height = 75
         Align = alClient
         Caption = '4'
         Font.Charset = DEFAULT_CHARSET
@@ -420,9 +420,9 @@ object Form1: TForm1
       end
       object btn5: TButton
         Left = 72
-        Top = 357
+        Top = 228
         Width = 70
-        Height = 118
+        Height = 75
         Align = alClient
         Caption = '5'
         Font.Charset = DEFAULT_CHARSET
@@ -438,9 +438,9 @@ object Form1: TForm1
       end
       object btn6: TButton
         Left = 142
-        Top = 357
+        Top = 228
         Width = 71
-        Height = 118
+        Height = 75
         Align = alClient
         Caption = '6'
         Font.Charset = DEFAULT_CHARSET
@@ -456,9 +456,9 @@ object Form1: TForm1
       end
       object btnSub: TButton
         Left = 213
-        Top = 357
+        Top = 228
         Width = 70
-        Height = 118
+        Height = 75
         Align = alClient
         Caption = '-'
         Font.Charset = DEFAULT_CHARSET
@@ -474,9 +474,9 @@ object Form1: TForm1
       end
       object btn1: TButton
         Left = 1
-        Top = 475
+        Top = 303
         Width = 71
-        Height = 118
+        Height = 75
         Align = alClient
         Caption = '1'
         Font.Charset = DEFAULT_CHARSET
@@ -492,9 +492,9 @@ object Form1: TForm1
       end
       object btn2: TButton
         Left = 72
-        Top = 475
+        Top = 303
         Width = 70
-        Height = 118
+        Height = 75
         Align = alClient
         Caption = '2'
         Font.Charset = DEFAULT_CHARSET
@@ -510,9 +510,9 @@ object Form1: TForm1
       end
       object btn3: TButton
         Left = 142
-        Top = 475
+        Top = 303
         Width = 71
-        Height = 118
+        Height = 75
         Align = alClient
         Caption = '3'
         Font.Charset = DEFAULT_CHARSET
@@ -528,9 +528,9 @@ object Form1: TForm1
       end
       object btnAdd: TButton
         Left = 213
-        Top = 475
+        Top = 303
         Width = 70
-        Height = 118
+        Height = 75
         Align = alClient
         Caption = '+'
         Font.Charset = DEFAULT_CHARSET
@@ -546,9 +546,9 @@ object Form1: TForm1
       end
       object btnPM: TButton
         Left = 1
-        Top = 593
+        Top = 378
         Width = 71
-        Height = 119
+        Height = 76
         Align = alClient
         Caption = #177
         Font.Charset = DEFAULT_CHARSET
@@ -564,9 +564,9 @@ object Form1: TForm1
       end
       object btn0: TButton
         Left = 72
-        Top = 593
+        Top = 378
         Width = 70
-        Height = 119
+        Height = 76
         Align = alClient
         Caption = '0'
         Font.Charset = DEFAULT_CHARSET
@@ -582,9 +582,9 @@ object Form1: TForm1
       end
       object btnPoint: TButton
         Left = 142
-        Top = 593
+        Top = 378
         Width = 71
-        Height = 119
+        Height = 76
         Align = alClient
         Caption = '.'
         Font.Charset = DEFAULT_CHARSET
@@ -600,9 +600,9 @@ object Form1: TForm1
       end
       object btnEq: TButton
         Left = 213
-        Top = 593
+        Top = 378
         Width = 70
-        Height = 119
+        Height = 76
         Align = alClient
         Caption = '='
         Font.Charset = DEFAULT_CHARSET
@@ -621,12 +621,12 @@ object Form1: TForm1
       Left = 0
       Top = 0
       Width = 284
-      Height = 94
+      Height = 193
       Align = alTop
       Alignment = taRightJustify
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
-      Font.Height = -64
+      Font.Height = -96
       Font.Name = 'Segoe UI'
       Font.Style = [fsBold]
       ImeName = 'txtResult'
@@ -639,16 +639,17 @@ object Form1: TForm1
     Left = 284
     Top = 0
     Width = 250
-    Height = 807
+    Height = 648
     Align = alRight
     Caption = 'Panel2'
     TabOrder = 1
     Visible = False
+    ExplicitHeight = 807
     object Memo1: TMemo
       Left = 1
       Top = 1
       Width = 248
-      Height = 805
+      Height = 646
       Align = alClient
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
@@ -659,6 +660,7 @@ object Form1: TForm1
         #27511#31243#35352#37636)
       ParentFont = False
       TabOrder = 0
+      ExplicitHeight = 805
     end
   end
 end
