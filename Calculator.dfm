@@ -69,7 +69,7 @@ object Form1: TForm1
         end
         item
           Column = 1
-          Control = btnSq
+          Control = btnSqr
           Row = 1
         end
         item
@@ -186,6 +186,8 @@ object Form1: TForm1
         end>
       ShowCaption = False
       TabOrder = 0
+      ExplicitTop = 121
+      ExplicitHeight = 686
       object btnPct: TButton
         Left = 1
         Top = 1
@@ -201,6 +203,7 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 0
         OnClick = btnPctClick
+        ExplicitHeight = 114
       end
       object btnCE: TButton
         Left = 72
@@ -217,6 +220,7 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 1
         OnClick = btnCEClick
+        ExplicitHeight = 114
       end
       object btnC: TButton
         Left = 142
@@ -233,6 +237,7 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 2
         OnClick = btnCClick
+        ExplicitHeight = 114
       end
       object btnBS: TButton
         Left = 213
@@ -249,6 +254,7 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 3
         OnClick = btnBSClick
+        ExplicitHeight = 114
       end
       object btnFrac: TButton
         Left = 1
@@ -265,8 +271,10 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 4
         OnClick = btnFracClick
+        ExplicitTop = 115
+        ExplicitHeight = 114
       end
-      object btnSq: TButton
+      object btnSqr: TButton
         Left = 72
         Top = 120
         Width = 70
@@ -280,7 +288,9 @@ object Form1: TForm1
         Font.Style = [fsBold]
         ParentFont = False
         TabOrder = 5
-        OnClick = btnSqClick
+        OnClick = btnSqrClick
+        ExplicitTop = 115
+        ExplicitHeight = 114
       end
       object btnSqrt: TButton
         Left = 142
@@ -297,6 +307,8 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 6
         OnClick = btnSqrtClick
+        ExplicitTop = 115
+        ExplicitHeight = 114
       end
       object btnDiv: TButton
         Left = 213
@@ -313,6 +325,8 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 7
         OnClick = btnOperatorClick
+        ExplicitTop = 115
+        ExplicitHeight = 114
       end
       object btn7: TButton
         Left = 1
@@ -329,6 +343,8 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 8
         OnClick = btnNumberClick
+        ExplicitTop = 229
+        ExplicitHeight = 114
       end
       object btn8: TButton
         Left = 72
@@ -345,6 +361,8 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 9
         OnClick = btnNumberClick
+        ExplicitTop = 229
+        ExplicitHeight = 114
       end
       object btn9: TButton
         Left = 142
@@ -361,6 +379,8 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 10
         OnClick = btnNumberClick
+        ExplicitTop = 229
+        ExplicitHeight = 114
       end
       object btnMul: TButton
         Left = 213
@@ -377,6 +397,8 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 11
         OnClick = btnOperatorClick
+        ExplicitTop = 229
+        ExplicitHeight = 114
       end
       object btn4: TButton
         Left = 1
@@ -393,6 +415,8 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 12
         OnClick = btnNumberClick
+        ExplicitTop = 343
+        ExplicitHeight = 114
       end
       object btn5: TButton
         Left = 72
@@ -409,6 +433,8 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 13
         OnClick = btnNumberClick
+        ExplicitTop = 343
+        ExplicitHeight = 114
       end
       object btn6: TButton
         Left = 142
@@ -425,6 +451,8 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 14
         OnClick = btnNumberClick
+        ExplicitTop = 343
+        ExplicitHeight = 114
       end
       object btnSub: TButton
         Left = 213
@@ -441,6 +469,8 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 15
         OnClick = btnOperatorClick
+        ExplicitTop = 343
+        ExplicitHeight = 114
       end
       object btn1: TButton
         Left = 1
@@ -457,6 +487,8 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 16
         OnClick = btnNumberClick
+        ExplicitTop = 457
+        ExplicitHeight = 114
       end
       object btn2: TButton
         Left = 72
@@ -473,6 +505,8 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 17
         OnClick = btnNumberClick
+        ExplicitTop = 457
+        ExplicitHeight = 114
       end
       object btn3: TButton
         Left = 142
@@ -489,6 +523,8 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 18
         OnClick = btnNumberClick
+        ExplicitTop = 457
+        ExplicitHeight = 114
       end
       object btnAdd: TButton
         Left = 213
@@ -505,6 +541,8 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 19
         OnClick = btnOperatorClick
+        ExplicitTop = 457
+        ExplicitHeight = 114
       end
       object btnPM: TButton
         Left = 1
@@ -521,6 +559,8 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 20
         OnClick = btnPMClick
+        ExplicitTop = 571
+        ExplicitHeight = 114
       end
       object btn0: TButton
         Left = 72
@@ -537,6 +577,8 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 21
         OnClick = btnNumberClick
+        ExplicitTop = 571
+        ExplicitHeight = 114
       end
       object btnPoint: TButton
         Left = 142
@@ -553,6 +595,8 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 22
         OnClick = btnNumberClick
+        ExplicitTop = 571
+        ExplicitHeight = 114
       end
       object btnEq: TButton
         Left = 213
@@ -569,6 +613,8 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 23
         OnClick = btnEqualClick
+        ExplicitTop = 571
+        ExplicitHeight = 114
       end
     end
     object txtResult: TEdit
@@ -604,8 +650,14 @@ object Form1: TForm1
       Width = 248
       Height = 805
       Align = alClient
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -19
+      Font.Name = #24494#36575#27491#40657#39636
+      Font.Style = [fsBold]
       Lines.Strings = (
         #27511#31243#35352#37636)
+      ParentFont = False
       TabOrder = 0
     end
   end

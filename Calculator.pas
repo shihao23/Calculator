@@ -13,7 +13,7 @@ type
     btnC: TButton;
     btnBS: TButton;
     btnFrac: TButton;
-    btnSq: TButton;
+    btnSqr: TButton;
     btnSqrt: TButton;
     btnDiv: TButton;
     btn7: TButton;
@@ -37,6 +37,7 @@ type
     Panel1: TPanel;
     Panel2: TPanel;
     Memo1: TMemo;
+    procedure ApplyUnary(OpName: string; Func: TFunc<Double, Double>);
     procedure btnNumberClick(Sender: TObject);
     procedure btnOperatorClick(Sender: TObject);
     procedure btnEqualClick(Sender: TObject);
@@ -44,12 +45,13 @@ type
     procedure btnCEClick(Sender: TObject);
     procedure btnBSClick(Sender: TObject);
     procedure btnSqrtClick(Sender: TObject);
-    procedure btnSqClick(Sender: TObject);
+    procedure btnSqrClick(Sender: TObject);
     procedure btnFracClick(Sender: TObject);
     procedure btnPMClick(Sender: TObject);
     procedure btnPctClick(Sender: TObject);
     procedure FormResize(Sender: TObject);
     procedure UpdateMemo(Num1: Double; Op: string; Num2: Double; Res: Double);
+    procedure UpdateMemoUnary(Op: string; Num: Double; Res: Double);
   private
     { Private declarations }
     FOperator: string;   // 存放運算符號 (+, -, *, /)
@@ -70,8 +72,8 @@ implementation
 
 {$R *.dfm}
 
-//根據按鈕的Caption輸出對應的值
 procedure TForm1.btnNumberClick(Sender: TObject);
+//根據按鈕的Caption輸出對應的值
 var
   ClickedText: string;
 begin
@@ -85,8 +87,8 @@ begin
   end;
 end;
 
-//檢查用戶是用加減乘除的哪個
 procedure TForm1.btnOperatorClick(Sender: TObject);
+//檢查用戶是用加減乘除的哪個
 begin
   try
     // 如果已有運算子，且現在不是剛按完運算子（表示輸入了新數字），就先算中結
@@ -100,8 +102,8 @@ begin
   end;
 end;
 
-//加減乘除的運輸
 procedure TForm1.btnEqualClick(Sender: TObject);
+//加減乘除的運輸
 begin
   // 防止沒按過運算符號就按等於
   if FOperator = '' then Exit;
@@ -130,8 +132,8 @@ begin
   FIsNewNum := True; // 計算完畢，下次輸入視為新開頭
 end;
 
-// C 按鈕：全部重置
 procedure TForm1.btnCClick(Sender: TObject);
+// C 按鈕：全部重置
 begin
   txtResult.Text := '0';
   FFirstNum := 0;
@@ -139,14 +141,14 @@ begin
   FIsNewNum := False;
 end;
 
-// CE 按鈕：只清除目前的顯示數值
 procedure TForm1.btnCEClick(Sender: TObject);
+// CE 按鈕：只清除目前的顯示數值
 begin
   txtResult.Text := '0';
 end;
 
-//返回的功能
 procedure TForm1.btnBSClick(Sender: TObject);
+//返回的功能
 var
   S: string;
 begin
@@ -160,42 +162,44 @@ begin
   txtResult.Text := S;
 end;
 
-//開根號的運算
+procedure TForm1.ApplyUnary(OpName: string; Func: TFunc<Double, Double>);
+var
+  Value, ResultValue: Double;
+begin
+  Value := StrToFloat(txtResult.Text);
+  ResultValue := Func(Value);
+  txtResult.Text := FloatToStr(ResultValue);
+  UpdateMemoUnary(OpName, Value, ResultValue);
+  FIsNewNum := True;
+end;
+
 procedure TForm1.btnSqrtClick(Sender: TObject);
+//開根號的運算
 begin
-  txtResult.Text := FloatToStr(Sqrt(StrToFloat(txtResult.Text)));
-  FIsNewNum := True;
+  ApplyUnary('Sqr', function(x: Double): Double begin Result := Sqrt(x); end);
 end;
 
+procedure TForm1.btnSqrClick(Sender: TObject);
 //做平方的運算
-procedure TForm1.btnSqClick(Sender: TObject);
 begin
-  Value := StrToFloat(txtResult.Text);
-  txtResult.Text := FloatToStr(Value * Value);
-  FIsNewNum := True;
+  ApplyUnary('Sqr', function(x: Double): Double begin Result := x * x; end);
 end;
 
-//做1/x的運算
 procedure TForm1.btnFracClick(Sender: TObject);
+//做(1/x)的運算
 begin
-  Value := StrToFloat(txtResult.Text);
-  if Value <> 0 then txtResult.Text := FloatToStr(1 / Value)
-  else ShowMessage('分母不能為零');
-  FIsNewNum := True;
+  ApplyUnary('1 /', function(x: Double): Double begin Result := 1 / x; end);
 end;
 
-//做百分百的運算
 procedure TForm1.btnPctClick(Sender: TObject);
+//做百分百的運算
 begin
-  Value := StrToFloat(txtResult.Text);
-  txtResult.Text := FloatToStr(Value / 100);
-  FIsNewNum := True; // 運算完後，下一個輸入的數字視為新數字
+  ApplyUnary('%', function(x: Double): Double begin Result := x / 100; end);
 end;
 
- //做正負值的轉換
 procedure TForm1.btnPMClick(Sender: TObject);
+//做正負值的轉換
 begin
-  // 先轉成數字
   Value := StrToFloatDef(txtResult.Text, 0);
   // 如果不是 0，就取負數（0 乘以 -1 還是 0，所以不需要特別判斷 if）
   if Value <> 0 then
@@ -210,7 +214,6 @@ begin
   // 假設視窗寬度大於 600 像素時，就顯示歷史紀錄
   if Self.Width > 600 then begin
     Panel2.Visible := True;
-    // 如果你有用 Splitter，也要同步顯示
     Memo1.Visible := True;
   end else begin
     Panel2.Visible := False;
@@ -218,12 +221,17 @@ begin
   end;
 end;
 
-// 新增一個專門輸出的 Procedure
 procedure TForm1.UpdateMemo(Num1: Double; Op: string; Num2: Double; Res: Double);
 begin
   if Memo1.Lines.Count = 0 then Memo1.Lines.Add('');
   // 輸出格式：1 + 2 = 3
   Memo1.Lines.Add(FloatToStr(Num1) + ' ' + Op + ' ' + FloatToStr(Num2) + ' = ' + FloatToStr(Res));
+end;
+
+procedure TForm1.UpdateMemoUnary(Op: string; Num: Double; Res: Double);
+begin
+  // 例如：Sqrt(9) = 3
+  Memo1.Lines.Add(Op + '(' + FloatToStr(Num) + ') = ' + FloatToStr(Res));
 end;
 
 end.
