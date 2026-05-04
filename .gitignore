@@ -1,0 +1,20 @@
+cat > .gitignore << 'EOF'
+# Build output
+Win32/
+Win64/
+Debug/
+Release/
+
+# History / backup
+__history/
+_history/
+_recovery/
+
+# Delphi local files
+*.local
+*.identcache
+*.dcu
+*.exe
+*.log
+*.map
+EOF
