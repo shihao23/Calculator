@@ -7,6 +7,7 @@ uses
   Vcl.Graphics,Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls;
 
 type
+  TBinaryOperator = (boNone, boAdd, boSub, boMul, boDiv);
   TForm1 = class(TForm)
     btnPct: TButton;
     btnCE: TButton;
@@ -55,9 +56,13 @@ type
     function GetDisplayValue: Double;
     procedure SetDisplayValue(const AValue: Double);
     function ShowMathError(const Msg: string): Double;
+    function OperatorToText(AOp: TBinaryOperator): string;
+    procedure SetOperator(AOp: TBinaryOperator);
+    procedure ExecutePendingOperation;
+    function GetCaption(Sender: TObject): string;
   private
     { Private declarations }
-    FOperator: string;   // 存放運算符號 (+, -, *, /)
+    FOperator: TBinaryOperator;   // 存放運算符號 (+, -, *, /)
     FIsNewNum: Boolean;  // 標記接下來輸入的是否為新數字
     FFirstNum: Double;   // 存放第一個數字
     SecondNum: Double;   // 存放第二個數字
@@ -78,7 +83,7 @@ procedure TForm1.btnNumberClick(Sender: TObject);
 var
   ClickedText: string;
 begin
-  ClickedText := (Sender as TButton).Caption;
+  ClickedText := GetCaption(Sender);
   if ClickedText = '.' then
   begin
     if FIsNewNum then
@@ -99,48 +104,76 @@ begin
   end else txtResult.Text := txtResult.Text + ClickedText;
 end;
 
-procedure TForm1.btnOperatorClick(Sender: TObject);
-//檢查用戶是用加減乘除的哪個
+function TForm1.OperatorToText(AOp: TBinaryOperator): string;
 begin
-  try
-    // 如果已有運算子，且現在不是剛按完運算子（表示輸入了新數字），就先算中結
-    if (FOperator <> '') and (not FIsNewNum) then btnEqualClick(nil); // 傳 nil 表示這是「連加中結」，不要結束算式
-    FFirstNum := GetDisplayValue;
-    FOperator := (Sender as TButton).Caption;
-    //txtResult.Text := txtResult.Text + ' ' + FOperator;
-    FIsNewNum := True; // 設為 True，讓下一次按數字時知道要換新的一行
-  except
-    on E: EConvertError do ShowMessage('輸入格式錯誤');
+  case AOp of
+    boAdd: Result := '+';
+    boSub: Result := '-';
+    boMul: Result := '×';
+    boDiv: Result := '÷';
+  else
+    Result := '';
   end;
 end;
 
-procedure TForm1.btnEqualClick(Sender: TObject);
+procedure TForm1.SetOperator(AOp: TBinaryOperator);
+begin
+ try
+   if (FOperator <> boNone) and (not FIsNewNum) then ExecutePendingOperation;
+   FFirstNum := GetDisplayValue;
+   FOperator := AOp;
+   FIsNewNum := True;
+ except
+    on E: EConvertError do ShowMessage('輸入格式錯誤');
+ end;
+end;
+
+procedure TForm1.btnOperatorClick(Sender: TObject);
+//檢查用戶是用加減乘除的哪個
+var
+  BtnCaption: string;
+begin
+  BtnCaption := GetCaption(Sender);
+  if BtnCaption = '+' then SetOperator(boAdd)
+  else if BtnCaption = '-' then SetOperator(boSub)
+  else if (BtnCaption = '×') or (BtnCaption = '*') then SetOperator(boMul)
+  else if (BtnCaption = '÷') or (BtnCaption = '/') then SetOperator(boDiv);
+end;
+
+procedure TForm1.ExecutePendingOperation;
 //加減乘除的運輸
 begin
   // 防止沒按過運算符號就按等於
-  if FOperator = '' then Exit;
-  try
-    SecondNum := GetDisplayValue;
-  except
-    Exit;
-  end;
+  if FOperator = boNone then Exit;
+  SecondNum := GetDisplayValue;
   ResultNum := 0;
-  if FOperator = '+' then ResultNum := FFirstNum + SecondNum
-  else if FOperator = '-' then ResultNum := FFirstNum - SecondNum
-  else if FOperator = '×' then ResultNum := FFirstNum * SecondNum
-  else if FOperator = '÷' then begin
-    if SecondNum <> 0 then ResultNum := FFirstNum / SecondNum
-    else begin
-      ShowMessage('除數不能為 0');
-      SetDisplayValue(0);
-      FIsNewNum := True;
-      Exit;
-    end;
+  case FOperator of
+    boAdd:
+      ResultNum := FFirstNum + SecondNum;
+    boSub:
+      ResultNum := FFirstNum - SecondNum;
+    boMul:
+      ResultNum := FFirstNum * SecondNum;
+    boDiv:
+      begin
+        if SecondNum = 0 then begin
+          ShowMessage('除數不能為 0');
+          SetDisplayValue(0);
+          FIsNewNum := True;
+          Exit;
+        end;
+        ResultNum := FFirstNum / SecondNum;
+      end;
   end;
-  UpdateMemo(FFirstNum, FOperator, SecondNum, ResultNum);
+  UpdateMemo(FFirstNum, OperatorToText(FOperator), SecondNum, ResultNum);
   SetDisplayValue(ResultNum);
-  FOperator := '';   // 清除運算符號，避免重複按等於造成問題
-  FIsNewNum := True; // 計算完畢，下次輸入視為新開頭
+  FOperator := boNone;  // 清除運算符號，避免重複按等於造成問題
+  FIsNewNum := True;  // 計算完畢，下次輸入視為新開頭
+end;
+
+procedure TForm1.btnEqualClick(Sender: TObject);
+begin
+  ExecutePendingOperation;
 end;
 
 procedure TForm1.btnCClick(Sender: TObject);
@@ -148,7 +181,7 @@ procedure TForm1.btnCClick(Sender: TObject);
 begin
   SetDisplayValue(0);
   FFirstNum := 0;
-  FOperator := '';
+  FOperator := boNone;
   FIsNewNum := False;
 end;
 
@@ -184,8 +217,7 @@ begin
     UpdateMemoUnary(OpName, Value, ResultValue);
     FIsNewNum := True;
   except
-    on E: Exception do
-      ShowMessage(E.Message);
+    on E: Exception do ShowMessage(E.Message);
   end;
 end;
 
@@ -199,6 +231,7 @@ procedure TForm1.btnSqrtClick(Sender: TObject);
 //開根號的運算
 begin
   ApplyUnary('Sqrt', function(x: Double): Double begin if x >= 0 then Result := Sqrt(x)
+
                                                        else Result := ShowMathError('不能對負數開根號');
                                                  end);
 end;
@@ -252,7 +285,7 @@ end;
 
 procedure TForm1.UpdateMemoUnary(Op: string; Num: Double; Res: Double);
 begin
-   // 例如：Sqrt(9) = 3
+  // 例如：Sqrt(9) = 3
   if Op = '%' then  Memo1.Lines.Add( '(' + FloatToStr(Num) + ')' + Op + ' = ' + FloatToStr(Res))
   else Memo1.Lines.Add(Op + '(' + FloatToStr(Num) + ') = ' + FloatToStr(Res));
 end;
@@ -266,4 +299,10 @@ procedure TForm1.SetDisplayValue(const AValue: Double);
 begin
   txtResult.Text := FloatToStr(AValue);
 end;
+
+function TForm1.GetCaption(Sender: TObject): string;
+begin
+  Result := (Sender as TButton).Caption;
+end;
+
 end.
