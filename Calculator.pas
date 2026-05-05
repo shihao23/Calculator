@@ -3,8 +3,8 @@ unit Calculator;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls;
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, System.Math,
+  Vcl.Graphics,Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls;
 
 type
   TForm1 = class(TForm)
@@ -54,6 +54,7 @@ type
     procedure UpdateMemoUnary(Op: string; Num: Double; Res: Double);
     function GetDisplayValue: Double;
     procedure SetDisplayValue(const AValue: Double);
+    function ShowMathError(const Msg: string): Double;
   private
     { Private declarations }
     FOperator: string;   // 存放運算符號 (+, -, *, /)
@@ -78,13 +79,24 @@ var
   ClickedText: string;
 begin
   ClickedText := (Sender as TButton).Caption;
-  // 修正邏輯：如果是新數字標記 (FIsNewNum) 或者是目前的文字是 '0'，就覆蓋掉
+  if ClickedText = '.' then
+  begin
+    if FIsNewNum then
+    begin
+      txtResult.Text := '0.';
+      FIsNewNum := False;
+      Exit;
+    end;
+    if Pos('.', txtResult.Text) > 0 then
+      Exit;
+    txtResult.Text := txtResult.Text + '.';
+    Exit;
+  end;
+  //如果是新數字標記 (FIsNewNum) 或者是目前的文字是 '0'，就覆蓋掉
   if (txtResult.Text = '0') or (FIsNewNum) then begin
     txtResult.Text := ClickedText;
     FIsNewNum := False; // 重置標記，接下來輸入的數字要用串接的
-  end else begin
-    txtResult.Text := txtResult.Text + ClickedText;
-  end;
+  end else txtResult.Text := txtResult.Text + ClickedText;
 end;
 
 procedure TForm1.btnOperatorClick(Sender: TObject);
@@ -113,10 +125,10 @@ begin
     Exit;
   end;
   ResultNum := 0;
-  if FOperator = '+' then ResultNum := FFirstNum + SecondNum;
-  if FOperator = '-' then ResultNum := FFirstNum - SecondNum;
-  if FOperator = '×' then ResultNum := FFirstNum * SecondNum;
-  if FOperator = '÷' then begin
+  if FOperator = '+' then ResultNum := FFirstNum + SecondNum
+  else if FOperator = '-' then ResultNum := FFirstNum - SecondNum
+  else if FOperator = '×' then ResultNum := FFirstNum * SecondNum
+  else if FOperator = '÷' then begin
     if SecondNum <> 0 then ResultNum := FFirstNum / SecondNum
     else begin
       ShowMessage('除數不能為 0');
@@ -165,17 +177,30 @@ procedure TForm1.ApplyUnary(OpName: string; Func: TFunc<Double, Double>);
 var
   Value, ResultValue: Double;
 begin
-  Value := GetDisplayValue;
-  ResultValue := Func(Value);
-  SetDisplayValue(ResultValue);
-  UpdateMemoUnary(OpName, Value, ResultValue);
-  FIsNewNum := True;
+  try
+    Value := GetDisplayValue;
+    ResultValue := Func(Value);
+    SetDisplayValue(ResultValue);
+    UpdateMemoUnary(OpName, Value, ResultValue);
+    FIsNewNum := True;
+  except
+    on E: Exception do
+      ShowMessage(E.Message);
+  end;
+end;
+
+function TForm1.ShowMathError(const Msg: string): Double;
+begin
+  Application.MessageBox(PChar(Msg), '錯誤提示', MB_OK + MB_ICONERROR);
+  Result := 0;
 end;
 
 procedure TForm1.btnSqrtClick(Sender: TObject);
 //開根號的運算
 begin
-  ApplyUnary('Sqrt', function(x: Double): Double begin Result := Sqrt(x); end);
+  ApplyUnary('Sqrt', function(x: Double): Double begin if x >= 0 then Result := Sqrt(x)
+                                                       else Result := ShowMathError('不能對負數開根號');
+                                                 end);
 end;
 
 procedure TForm1.btnSqrClick(Sender: TObject);
@@ -188,10 +213,7 @@ procedure TForm1.btnFracClick(Sender: TObject);
 //做(1/x)的運算
 begin
   ApplyUnary('1 /', function(x: Double): Double begin if x <> 0 then Result := 1 / x
-                                                      else begin
-                                                           Application.MessageBox('分母不能為零', '錯誤提示', MB_OK + MB_ICONERROR);
-                                                           Result := 0;
-                                                       end;
+                                                      else Result := ShowMathError('分母不能為零');
                                                 end);
 end;
 
@@ -207,12 +229,7 @@ var
   Value: Double;
 begin
   Value := GetDisplayValue;
-  // 如果不是 0，就取負數（0 乘以 -1 還是 0，所以不需要特別判斷 if）
-  if Value <> 0 then
-  begin
-    Value := Value * -1;
-    SetDisplayValue(Value);
-  end;
+  SetDisplayValue(-Value);
 end;
 
 procedure TForm1.FormResize(Sender: TObject);
@@ -229,15 +246,15 @@ end;
 
 procedure TForm1.UpdateMemo(Num1: Double; Op: string; Num2: Double; Res: Double);
 begin
-  if Memo1.Lines.Count = 0 then Memo1.Lines.Add('');
   // 輸出格式：1 + 2 = 3
   Memo1.Lines.Add(FloatToStr(Num1) + ' ' + Op + ' ' + FloatToStr(Num2) + ' = ' + FloatToStr(Res));
 end;
 
 procedure TForm1.UpdateMemoUnary(Op: string; Num: Double; Res: Double);
 begin
-  // 例如：Sqrt(9) = 3
-  Memo1.Lines.Add(Op + '(' + FloatToStr(Num) + ') = ' + FloatToStr(Res));
+   // 例如：Sqrt(9) = 3
+  if Op = '%' then  Memo1.Lines.Add( '(' + FloatToStr(Num) + ')' + Op + ' = ' + FloatToStr(Res))
+  else Memo1.Lines.Add(Op + '(' + FloatToStr(Num) + ') = ' + FloatToStr(Res));
 end;
 
 function TForm1.GetDisplayValue: Double;

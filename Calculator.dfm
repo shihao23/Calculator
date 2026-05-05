@@ -1,7 +1,7 @@
 object Form1: TForm1
   Left = 0
   Top = 0
-  Caption = 'Form1'
+  Caption = 'Calculator'
   ClientHeight = 648
   ClientWidth = 534
   Color = clBtnFace
@@ -20,12 +20,11 @@ object Form1: TForm1
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitHeight = 807
     object GridPanel1: TGridPanel
       Left = 0
-      Top = 193
+      Top = 136
       Width = 284
-      Height = 455
+      Height = 512
       Align = alClient
       Caption = 'GridPanel1'
       ColumnCollection = <
@@ -186,13 +185,13 @@ object Form1: TForm1
         end>
       ShowCaption = False
       TabOrder = 0
-      ExplicitTop = 121
-      ExplicitHeight = 686
+      ExplicitTop = 193
+      ExplicitHeight = 455
       object btnPct: TButton
         Left = 1
         Top = 1
         Width = 71
-        Height = 76
+        Height = 85
         Align = alClient
         Caption = '%'
         Font.Charset = DEFAULT_CHARSET
@@ -203,13 +202,13 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 0
         OnClick = btnPctClick
-        ExplicitHeight = 114
+        ExplicitHeight = 76
       end
       object btnCE: TButton
         Left = 72
         Top = 1
         Width = 70
-        Height = 76
+        Height = 85
         Align = alClient
         Caption = 'CE'
         Font.Charset = DEFAULT_CHARSET
@@ -220,13 +219,13 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 1
         OnClick = btnCEClick
-        ExplicitHeight = 114
+        ExplicitHeight = 76
       end
       object btnC: TButton
         Left = 142
         Top = 1
         Width = 71
-        Height = 76
+        Height = 85
         Align = alClient
         Caption = 'C'
         Font.Charset = DEFAULT_CHARSET
@@ -237,13 +236,13 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 2
         OnClick = btnCClick
-        ExplicitHeight = 114
+        ExplicitHeight = 76
       end
       object btnBS: TButton
         Left = 213
         Top = 1
         Width = 70
-        Height = 76
+        Height = 85
         Align = alClient
         Caption = #61653
         Font.Charset = SYMBOL_CHARSET
@@ -254,13 +253,13 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 3
         OnClick = btnBSClick
-        ExplicitHeight = 114
+        ExplicitHeight = 76
       end
       object btnFrac: TButton
         Left = 1
-        Top = 77
+        Top = 86
         Width = 71
-        Height = 75
+        Height = 85
         Align = alClient
         Caption = '1'#8260'x'
         Font.Charset = DEFAULT_CHARSET
@@ -271,14 +270,14 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 4
         OnClick = btnFracClick
-        ExplicitTop = 115
-        ExplicitHeight = 114
+        ExplicitTop = 77
+        ExplicitHeight = 75
       end
       object btnSqr: TButton
         Left = 72
-        Top = 77
+        Top = 86
         Width = 70
-        Height = 75
+        Height = 85
         Align = alClient
         Caption = 'x^2'
         Font.Charset = DEFAULT_CHARSET
@@ -289,14 +288,14 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 5
         OnClick = btnSqrClick
-        ExplicitTop = 115
-        ExplicitHeight = 114
+        ExplicitTop = 77
+        ExplicitHeight = 75
       end
       object btnSqrt: TButton
         Left = 142
-        Top = 77
+        Top = 86
         Width = 71
-        Height = 75
+        Height = 85
         Align = alClient
         Caption = #8730'(2&x)'
         Font.Charset = DEFAULT_CHARSET
@@ -307,14 +306,14 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 6
         OnClick = btnSqrtClick
-        ExplicitTop = 115
-        ExplicitHeight = 114
+        ExplicitTop = 77
+        ExplicitHeight = 75
       end
       object btnDiv: TButton
         Left = 213
-        Top = 77
+        Top = 86
         Width = 70
-        Height = 75
+        Height = 85
         Align = alClient
         Caption = #247
         Font.Charset = DEFAULT_CHARSET
@@ -325,14 +324,14 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 7
         OnClick = btnOperatorClick
-        ExplicitTop = 115
-        ExplicitHeight = 114
+        ExplicitTop = 77
+        ExplicitHeight = 75
       end
       object btn7: TButton
         Left = 1
-        Top = 152
+        Top = 171
         Width = 71
-        Height = 76
+        Height = 85
         Align = alClient
         Caption = '7'
         Font.Charset = DEFAULT_CHARSET
@@ -343,14 +342,14 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 8
         OnClick = btnNumberClick
-        ExplicitTop = 229
-        ExplicitHeight = 114
+        ExplicitTop = 152
+        ExplicitHeight = 76
       end
       object btn8: TButton
         Left = 72
-        Top = 152
+        Top = 171
         Width = 70
-        Height = 76
+        Height = 85
         Align = alClient
         Caption = '8'
         Font.Charset = DEFAULT_CHARSET
@@ -361,14 +360,14 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 9
         OnClick = btnNumberClick
-        ExplicitTop = 229
-        ExplicitHeight = 114
+        ExplicitTop = 152
+        ExplicitHeight = 76
       end
       object btn9: TButton
         Left = 142
-        Top = 152
+        Top = 171
         Width = 71
-        Height = 76
+        Height = 85
         Align = alClient
         Caption = '9'
         Font.Charset = DEFAULT_CHARSET
@@ -379,14 +378,14 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 10
         OnClick = btnNumberClick
-        ExplicitTop = 229
-        ExplicitHeight = 114
+        ExplicitTop = 152
+        ExplicitHeight = 76
       end
       object btnMul: TButton
         Left = 213
-        Top = 152
+        Top = 171
         Width = 70
-        Height = 76
+        Height = 85
         Align = alClient
         Caption = #215
         Font.Charset = DEFAULT_CHARSET
@@ -397,14 +396,14 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 11
         OnClick = btnOperatorClick
-        ExplicitTop = 229
-        ExplicitHeight = 114
+        ExplicitTop = 152
+        ExplicitHeight = 76
       end
       object btn4: TButton
         Left = 1
-        Top = 228
+        Top = 256
         Width = 71
-        Height = 75
+        Height = 85
         Align = alClient
         Caption = '4'
         Font.Charset = DEFAULT_CHARSET
@@ -415,14 +414,14 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 12
         OnClick = btnNumberClick
-        ExplicitTop = 343
-        ExplicitHeight = 114
+        ExplicitTop = 228
+        ExplicitHeight = 75
       end
       object btn5: TButton
         Left = 72
-        Top = 228
+        Top = 256
         Width = 70
-        Height = 75
+        Height = 85
         Align = alClient
         Caption = '5'
         Font.Charset = DEFAULT_CHARSET
@@ -433,14 +432,14 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 13
         OnClick = btnNumberClick
-        ExplicitTop = 343
-        ExplicitHeight = 114
+        ExplicitTop = 228
+        ExplicitHeight = 75
       end
       object btn6: TButton
         Left = 142
-        Top = 228
+        Top = 256
         Width = 71
-        Height = 75
+        Height = 85
         Align = alClient
         Caption = '6'
         Font.Charset = DEFAULT_CHARSET
@@ -451,14 +450,14 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 14
         OnClick = btnNumberClick
-        ExplicitTop = 343
-        ExplicitHeight = 114
+        ExplicitTop = 228
+        ExplicitHeight = 75
       end
       object btnSub: TButton
         Left = 213
-        Top = 228
+        Top = 256
         Width = 70
-        Height = 75
+        Height = 85
         Align = alClient
         Caption = '-'
         Font.Charset = DEFAULT_CHARSET
@@ -469,14 +468,14 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 15
         OnClick = btnOperatorClick
-        ExplicitTop = 343
-        ExplicitHeight = 114
+        ExplicitTop = 228
+        ExplicitHeight = 75
       end
       object btn1: TButton
         Left = 1
-        Top = 303
+        Top = 341
         Width = 71
-        Height = 75
+        Height = 85
         Align = alClient
         Caption = '1'
         Font.Charset = DEFAULT_CHARSET
@@ -487,14 +486,14 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 16
         OnClick = btnNumberClick
-        ExplicitTop = 457
-        ExplicitHeight = 114
+        ExplicitTop = 303
+        ExplicitHeight = 75
       end
       object btn2: TButton
         Left = 72
-        Top = 303
+        Top = 341
         Width = 70
-        Height = 75
+        Height = 85
         Align = alClient
         Caption = '2'
         Font.Charset = DEFAULT_CHARSET
@@ -505,14 +504,14 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 17
         OnClick = btnNumberClick
-        ExplicitTop = 457
-        ExplicitHeight = 114
+        ExplicitTop = 303
+        ExplicitHeight = 75
       end
       object btn3: TButton
         Left = 142
-        Top = 303
+        Top = 341
         Width = 71
-        Height = 75
+        Height = 85
         Align = alClient
         Caption = '3'
         Font.Charset = DEFAULT_CHARSET
@@ -523,14 +522,14 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 18
         OnClick = btnNumberClick
-        ExplicitTop = 457
-        ExplicitHeight = 114
+        ExplicitTop = 303
+        ExplicitHeight = 75
       end
       object btnAdd: TButton
         Left = 213
-        Top = 303
+        Top = 341
         Width = 70
-        Height = 75
+        Height = 85
         Align = alClient
         Caption = '+'
         Font.Charset = DEFAULT_CHARSET
@@ -541,14 +540,14 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 19
         OnClick = btnOperatorClick
-        ExplicitTop = 457
-        ExplicitHeight = 114
+        ExplicitTop = 303
+        ExplicitHeight = 75
       end
       object btnPM: TButton
         Left = 1
-        Top = 378
+        Top = 426
         Width = 71
-        Height = 76
+        Height = 85
         Align = alClient
         Caption = #177
         Font.Charset = DEFAULT_CHARSET
@@ -559,14 +558,14 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 20
         OnClick = btnPMClick
-        ExplicitTop = 571
-        ExplicitHeight = 114
+        ExplicitTop = 378
+        ExplicitHeight = 76
       end
       object btn0: TButton
         Left = 72
-        Top = 378
+        Top = 426
         Width = 70
-        Height = 76
+        Height = 85
         Align = alClient
         Caption = '0'
         Font.Charset = DEFAULT_CHARSET
@@ -577,14 +576,14 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 21
         OnClick = btnNumberClick
-        ExplicitTop = 571
-        ExplicitHeight = 114
+        ExplicitTop = 378
+        ExplicitHeight = 76
       end
       object btnPoint: TButton
         Left = 142
-        Top = 378
+        Top = 426
         Width = 71
-        Height = 76
+        Height = 85
         Align = alClient
         Caption = '.'
         Font.Charset = DEFAULT_CHARSET
@@ -595,14 +594,14 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 22
         OnClick = btnNumberClick
-        ExplicitTop = 571
-        ExplicitHeight = 114
+        ExplicitTop = 378
+        ExplicitHeight = 76
       end
       object btnEq: TButton
         Left = 213
-        Top = 378
+        Top = 426
         Width = 70
-        Height = 76
+        Height = 85
         Align = alClient
         Caption = '='
         Font.Charset = DEFAULT_CHARSET
@@ -613,15 +612,15 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 23
         OnClick = btnEqualClick
-        ExplicitTop = 571
-        ExplicitHeight = 114
+        ExplicitTop = 378
+        ExplicitHeight = 76
       end
     end
     object txtResult: TEdit
       Left = 0
       Top = 0
       Width = 284
-      Height = 193
+      Height = 136
       Align = alTop
       Alignment = taRightJustify
       Font.Charset = DEFAULT_CHARSET
@@ -644,13 +643,13 @@ object Form1: TForm1
     Caption = 'Panel2'
     TabOrder = 1
     Visible = False
-    ExplicitHeight = 807
     object Memo1: TMemo
       Left = 1
       Top = 1
       Width = 248
       Height = 646
       Align = alClient
+      Alignment = taRightJustify
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
       Font.Height = -19
@@ -660,7 +659,6 @@ object Form1: TForm1
         #27511#31243#35352#37636)
       ParentFont = False
       TabOrder = 0
-      ExplicitHeight = 805
     end
   end
 end
