@@ -46,6 +46,7 @@ procedure TCalculatorEngine.Clear;
 begin
   FFirstNum := 0;
   FOperator := boNone;
+  FIsNewNum := False;
 end;
 
 function TCalculatorEngine.OperatorToText(AOp: TBinaryOperator): string;
@@ -61,8 +62,6 @@ begin
 end;
 
 procedure TCalculatorEngine.SetOperator(const CurrentValue: Double; AOp: TBinaryOperator);
-var
-  Info: TCalcResult;
 begin
     FFirstNum := CurrentValue;
     FOperator := AOp;

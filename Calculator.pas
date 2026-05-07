@@ -3,12 +3,13 @@ unit Calculator;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, System.Math,
-  Vcl.Graphics,Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, CalculatorEngine;
+  Winapi.Windows, Winapi.Messages, System.Variants, System.Classes,Vcl.Graphics,
+  System.SysUtils, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
+  CalculatorController;
 
 type
 
-  TForm1 = class(TForm)
+  TForm1 = class(TForm, ICalculatorView)
     btnPct: TButton;
     btnCE: TButton;
     btnC: TButton;
@@ -38,7 +39,6 @@ type
     Panel1: TPanel;
     Panel2: TPanel;
     Memo1: TMemo;
-    procedure ApplyUnary(OpName: string; Func: TFunc<Double, Double>);
     procedure btnNumberClick(Sender: TObject);
     procedure btnOperatorClick(Sender: TObject);
     procedure btnEqualClick(Sender: TObject);
@@ -51,18 +51,26 @@ type
     procedure btnPMClick(Sender: TObject);
     procedure btnPctClick(Sender: TObject);
     procedure FormResize(Sender: TObject);
-    procedure UpdateMemo(Num1: Double; Op: string; Num2: Double; Res: Double);
-    procedure UpdateMemoUnary(Op: string; Num: Double; Res: Double);
-    function GetDisplayValue: Double;
-    procedure SetDisplayValue(const AValue: Double);
     function ShowMathError(const Msg: string): Double;
-    function GetCaption(Sender: TObject): string;
-    procedure AppendBinaryHistory(const Info: TCalcResult);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
   private
     { Private declarations }
-    FModel: TCalculatorEngine;
+    FController: TCalculatorController;
+
+    { ===== Display ===== }
+    function GetDisplayValue: Double;
+    procedure SetDisplayValue(const AValue: Double);
+
+    { ===== Utility ===== }
+    function GetCaption(Sender: TObject): string;
+
+    { ===== History ===== }
+    procedure AppendBinaryHistory(const First, Second: Double; const OpText: string; const Result: Double);
+    procedure AppendUnaryHistory(const Op: string; const Num: Double; const Res: Double);
+    procedure UpdateDisplayText(const AText: string);
+    function GetDisplayText: string;
+
   public
     { Public declarations }
   end;
@@ -74,198 +82,23 @@ implementation
 
 {$R *.dfm}
 
+{ ========================================================= }
+{ Form Lifecycle                                            }
+{ ========================================================= }
+
 procedure TForm1.FormCreate(Sender: TObject);
 begin
-  FModel := TCalculatorEngine.Create;
+  FController := TCalculatorController.Create(Self);
 end;
 
 procedure TForm1.FormDestroy(Sender: TObject);
 begin
-  FModel.Free;
+  FController.Free;
 end;
 
-procedure TForm1.btnNumberClick(Sender: TObject);
-//根據按鈕的Caption輸出對應的值
-var
-  ClickedText: string;
-begin
-  ClickedText := GetCaption(Sender);
-  if ClickedText = '.' then
-  begin
-    if FModel.IsNewNum then
-    begin
-      txtResult.Text := '0.';
-      FModel.IsNewNum := False;
-      Exit;
-    end;
-    if Pos('.', txtResult.Text) > 0 then
-      Exit;
-    txtResult.Text := txtResult.Text + '.';
-    Exit;
-  end;
-  //如果是新數字標記 (FIsNewNum) 或者是目前的文字是 '0'，就覆蓋掉
-  if (txtResult.Text = '0') or (FModel.IsNewNum) then begin
-    txtResult.Text := ClickedText;
-    FModel.IsNewNum := False; // 重置標記，接下來輸入的數字要用串接的
-  end else txtResult.Text := txtResult.Text + ClickedText;
-end;
-
-procedure TForm1.btnOperatorClick(Sender: TObject);
-//檢查用戶是用加減乘除的哪個
-var
-  BtnCaption: string;
-  Info: TCalcResult;
-begin
-  try
-    BtnCaption := GetCaption(Sender);
-    if (FModel.OperatorValue <> boNone) and (not FModel.IsNewNum) then
-    begin
-      if FModel.ExecutePendingOperation(GetDisplayValue, Info) then
-      begin
-        AppendBinaryHistory(Info);
-        SetDisplayValue(Info.ResultNum);
-      end;
-    end;
-    if BtnCaption = '+' then FModel.SetOperator(GetDisplayValue, boAdd)
-    else if BtnCaption = '-' then FModel.SetOperator(GetDisplayValue, boSub)
-    else if (BtnCaption = '×') or (BtnCaption = '*') then FModel.SetOperator(GetDisplayValue, boMul)
-    else if (BtnCaption = '÷') or (BtnCaption = '/') then FModel.SetOperator(GetDisplayValue, boDiv);
-  except
-    on E: Exception do
-      ShowMessage('輸入格式錯誤');
-  end;
-end;
-
-procedure TForm1.btnEqualClick(Sender: TObject);
-var
-  Info: TCalcResult;
-begin
-  try
-    if FModel.ExecutePendingOperation(GetDisplayValue, Info) then
-    begin
-      AppendBinaryHistory(Info);
-      SetDisplayValue(Info.ResultNum);
-    end;
-  except
-    on E: Exception do
-      ShowMessage(E.Message);
-  end;
-end;
-
-procedure TForm1.btnCClick(Sender: TObject);
-// C 按鈕：全部重置
-begin
-  SetDisplayValue(0);
-  FModel.Clear;
-end;
-
-procedure TForm1.btnCEClick(Sender: TObject);
-// CE 按鈕：只清除目前的顯示數值
-begin
-  SetDisplayValue(0);
-end;
-
-procedure TForm1.btnBSClick(Sender: TObject);
-//返回的功能
-var
-  DisplayText: string;
-begin
-  DisplayText := txtResult.Text;
-  // 如果已經是 '0' 或是空的，就不用刪了
-  if (DisplayText = '0') or (DisplayText = '') then Exit;
-  // 刪除最後一個字元
-  Delete(DisplayText, Length(DisplayText), 1);
-  // 如果刪完後變空字串，就補回 '0'
-  if DisplayText = '' then DisplayText := '0';
-  txtResult.Text := DisplayText;
-end;
-
-procedure TForm1.ApplyUnary(OpName: string; Func: TFunc<Double, Double>);
-var
-  Value, ResultValue: Double;
-begin
-  try
-    Value := GetDisplayValue;
-    ResultValue := Func(Value);
-    SetDisplayValue(ResultValue);
-    UpdateMemoUnary(OpName, Value, ResultValue);
-    FModel.IsNewNum := True;
-  except
-    on E: Exception do ShowMessage(E.Message);
-  end;
-end;
-
-function TForm1.ShowMathError(const Msg: string): Double;
-begin
-  Application.MessageBox(PChar(Msg), '錯誤提示', MB_OK + MB_ICONERROR);
-  Result := 0;
-end;
-
-procedure TForm1.btnSqrtClick(Sender: TObject);
-//開根號的運算
-begin
-  ApplyUnary('Sqrt',FModel.UnarySqrt);
-end;
-
-procedure TForm1.btnSqrClick(Sender: TObject);
-//做平方的運算
-begin
-  ApplyUnary('Sqr', FModel.UnarySqr);
-end;
-
-procedure TForm1.btnFracClick(Sender: TObject);
-//做(1/x)的運算
-begin
-  ApplyUnary('1 /', FModel.UnaryReciprocal);
-end;
-
-procedure TForm1.btnPctClick(Sender: TObject);
-//做百分百的運算
-begin
-  ApplyUnary('%', FModel.UnaryPercent);
-end;
-
-procedure TForm1.btnPMClick(Sender: TObject);
-//做正負值的轉換
-var
-  Value: Double;
-begin
-  Value := GetDisplayValue;
-  SetDisplayValue(-Value);
-end;
-
-procedure TForm1.FormResize(Sender: TObject);
-begin
-  // 假設視窗寬度大於 600 像素時，就顯示歷史紀錄
-  if Self.Width > 600 then begin
-    Panel2.Visible := True;
-    Memo1.Visible := True;
-  end else begin
-    Panel2.Visible := False;
-    Memo1.Visible := False;
-  end;
-end;
-
-procedure TForm1.UpdateMemo(Num1: Double; Op: string; Num2: Double; Res: Double);
-begin
-  // 輸出格式：1 + 2 = 3
-  Memo1.Lines.Add(FloatToStr(Num1) + ' ' + Op + ' ' + FloatToStr(Num2) + ' = ' + FloatToStr(Res));
-end;
-
-procedure TForm1.AppendBinaryHistory(const Info: TCalcResult);
-begin
-  Memo1.Lines.Add(FloatToStr(Info.FirstNum) + ' ' +
-                  FModel.OperatorToText(Info.Op) + ' ' +
-                  FloatToStr(Info.SecondNum) + ' = ' +
-                  FloatToStr(Info.ResultNum));
-end;
-
-procedure TForm1.UpdateMemoUnary(Op: string; Num: Double; Res: Double);
-begin
-  // 例如：Sqrt(9) = 3
-  if Op = '%' then  Memo1.Lines.Add( '(' + FloatToStr(Num) + ')' + Op + ' = ' + FloatToStr(Res))
-  else Memo1.Lines.Add(Op + '(' + FloatToStr(Num) + ') = ' + FloatToStr(Res));
-end;
+{ ========================================================= }
+{ Display                                                   }
+{ ========================================================= }
 
 function TForm1.GetDisplayValue: Double;
 begin
@@ -277,9 +110,140 @@ begin
   txtResult.Text := FloatToStr(AValue);
 end;
 
+procedure TForm1.UpdateDisplayText(const AText: string);
+begin
+  // 真正改動 UI 元件的地方
+  txtResult.Text := AText;
+end;
+
+function TForm1.GetDisplayText: string;
+begin
+  Result := txtResult.Text;
+end;
+
+{ ========================================================= }
+{ Utility                                                   }
+{ ========================================================= }
+
 function TForm1.GetCaption(Sender: TObject): string;
 begin
   Result := (Sender as TButton).Caption;
+end;
+
+{ ========================================================= }
+{ History                                                   }
+{ ========================================================= }
+
+procedure TForm1.AppendBinaryHistory(const First, Second: Double; const OpText: string; const Result: Double);
+begin
+  // 輸出格式：1 + 2 = 3
+  Memo1.Lines.Add(Format('%g %s %g = %g', [First, OpText, Second, Result]));
+end;
+
+procedure TForm1.AppendUnaryHistory(const Op: string; const Num: Double; const Res: Double);
+begin
+  // 例如：Sqrt(9) = 3
+  if Op = '%' then  Memo1.Lines.Add( '(' + FloatToStr(Num) + ')' + Op + ' = ' + FloatToStr(Res))
+  else Memo1.Lines.Add(Op + '(' + FloatToStr(Num) + ') = ' + FloatToStr(Res));
+end;
+
+{ ========================================================= }
+{ Number Button                                             }
+{ ========================================================= }
+
+procedure TForm1.btnNumberClick(Sender: TObject);
+//根據按鈕的Caption輸出對應的值
+begin
+  FController.PressDigit(GetCaption(Sender));
+end;
+
+{ ========================================================= }
+{ Operator Button                                           }
+
+
+procedure TForm1.btnOperatorClick(Sender: TObject);
+//檢查用戶是用加減乘除的哪個
+begin
+  FController.PressOperatorClick(GetCaption(Sender), GetDisplayValue)
+end;
+
+procedure TForm1.btnEqualClick(Sender: TObject);
+begin
+  FController.PressEqual(GetDisplayValue);
+end;
+
+{ ========================================================= }
+{ Clear                                                     }
+{ ========================================================= }
+
+procedure TForm1.btnCClick(Sender: TObject);
+// C 按鈕：全部重置
+begin
+  FController.PressClearAll;
+end;
+
+procedure TForm1.btnCEClick(Sender: TObject);
+// CE 按鈕：只清除目前的顯示數值
+begin
+  FController.PressClearEntry;
+end;
+
+procedure TForm1.btnBSClick(Sender: TObject);
+//返回的功能
+begin
+  FController.PressBackspace;
+end;
+
+{ ========================================================= }
+{ Unary Operation                                           }
+{ ========================================================= }
+
+function TForm1.ShowMathError(const Msg: string): Double;
+begin
+  Application.MessageBox(PChar(Msg), '錯誤提示', MB_OK + MB_ICONERROR);
+  Result := 0;
+end;
+
+procedure TForm1.btnSqrtClick(Sender: TObject);
+begin
+  FController.SqrtClick(GetDisplayValue);
+end;
+
+
+procedure TForm1.btnSqrClick(Sender: TObject);
+begin
+  FController.SqrClick(GetDisplayValue);
+end;
+
+procedure TForm1.btnFracClick(Sender: TObject);
+begin
+  FController.FracClick(GetDisplayValue);
+end;
+
+procedure TForm1.btnPctClick(Sender: TObject);
+begin
+  FController.PctClick(GetDisplayValue);
+end;
+
+procedure TForm1.btnPMClick(Sender: TObject);
+begin
+  FController.PMClick(GetDisplayValue);
+end;
+
+{ ========================================================= }
+{ UI                                                        }
+{ ========================================================= }
+
+procedure TForm1.FormResize(Sender: TObject);
+begin
+  // 假設視窗寬度大於 600 像素時，就顯示歷史紀錄
+  if Self.Width > 600 then begin
+    Panel2.Visible := True;
+    Memo1.Visible := True;
+  end else begin
+    Panel2.Visible := False;
+    Memo1.Visible := False;
+  end;
 end;
 
 end.
