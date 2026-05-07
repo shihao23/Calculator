@@ -4,10 +4,10 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, System.Math,
-  Vcl.Graphics,Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls;
+  Vcl.Graphics,Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, CalculatorEngine;
 
 type
-  TBinaryOperator = (boNone, boAdd, boSub, boMul, boDiv);
+
   TForm1 = class(TForm)
     btnPct: TButton;
     btnCE: TButton;
@@ -56,17 +56,13 @@ type
     function GetDisplayValue: Double;
     procedure SetDisplayValue(const AValue: Double);
     function ShowMathError(const Msg: string): Double;
-    function OperatorToText(AOp: TBinaryOperator): string;
-    procedure SetOperator(AOp: TBinaryOperator);
-    procedure ExecutePendingOperation;
     function GetCaption(Sender: TObject): string;
+    procedure AppendBinaryHistory(const Info: TCalcResult);
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
   private
     { Private declarations }
-    FOperator: TBinaryOperator;   // 存放運算符號 (+, -, *, /)
-    FIsNewNum: Boolean;  // 標記接下來輸入的是否為新數字
-    FFirstNum: Double;   // 存放第一個數字
-    SecondNum: Double;   // 存放第二個數字
-    ResultNum: Double;   // 存放運算好的數字
+    FModel: TCalculatorEngine;
   public
     { Public declarations }
   end;
@@ -78,6 +74,16 @@ implementation
 
 {$R *.dfm}
 
+procedure TForm1.FormCreate(Sender: TObject);
+begin
+  FModel := TCalculatorEngine.Create;
+end;
+
+procedure TForm1.FormDestroy(Sender: TObject);
+begin
+  FModel.Free;
+end;
+
 procedure TForm1.btnNumberClick(Sender: TObject);
 //根據按鈕的Caption輸出對應的值
 var
@@ -86,10 +92,10 @@ begin
   ClickedText := GetCaption(Sender);
   if ClickedText = '.' then
   begin
-    if FIsNewNum then
+    if FModel.IsNewNum then
     begin
       txtResult.Text := '0.';
-      FIsNewNum := False;
+      FModel.IsNewNum := False;
       Exit;
     end;
     if Pos('.', txtResult.Text) > 0 then
@@ -98,91 +104,59 @@ begin
     Exit;
   end;
   //如果是新數字標記 (FIsNewNum) 或者是目前的文字是 '0'，就覆蓋掉
-  if (txtResult.Text = '0') or (FIsNewNum) then begin
+  if (txtResult.Text = '0') or (FModel.IsNewNum) then begin
     txtResult.Text := ClickedText;
-    FIsNewNum := False; // 重置標記，接下來輸入的數字要用串接的
+    FModel.IsNewNum := False; // 重置標記，接下來輸入的數字要用串接的
   end else txtResult.Text := txtResult.Text + ClickedText;
-end;
-
-function TForm1.OperatorToText(AOp: TBinaryOperator): string;
-begin
-  case AOp of
-    boAdd: Result := '+';
-    boSub: Result := '-';
-    boMul: Result := '×';
-    boDiv: Result := '÷';
-  else
-    Result := '';
-  end;
-end;
-
-procedure TForm1.SetOperator(AOp: TBinaryOperator);
-begin
- try
-   if (FOperator <> boNone) and (not FIsNewNum) then ExecutePendingOperation;
-   FFirstNum := GetDisplayValue;
-   FOperator := AOp;
-   FIsNewNum := True;
- except
-    on E: EConvertError do ShowMessage('輸入格式錯誤');
- end;
 end;
 
 procedure TForm1.btnOperatorClick(Sender: TObject);
 //檢查用戶是用加減乘除的哪個
 var
   BtnCaption: string;
+  Info: TCalcResult;
 begin
-  BtnCaption := GetCaption(Sender);
-  if BtnCaption = '+' then SetOperator(boAdd)
-  else if BtnCaption = '-' then SetOperator(boSub)
-  else if (BtnCaption = '×') or (BtnCaption = '*') then SetOperator(boMul)
-  else if (BtnCaption = '÷') or (BtnCaption = '/') then SetOperator(boDiv);
-end;
-
-procedure TForm1.ExecutePendingOperation;
-//加減乘除的運輸
-begin
-  // 防止沒按過運算符號就按等於
-  if FOperator = boNone then Exit;
-  SecondNum := GetDisplayValue;
-  ResultNum := 0;
-  case FOperator of
-    boAdd:
-      ResultNum := FFirstNum + SecondNum;
-    boSub:
-      ResultNum := FFirstNum - SecondNum;
-    boMul:
-      ResultNum := FFirstNum * SecondNum;
-    boDiv:
+  try
+    BtnCaption := GetCaption(Sender);
+    if (FModel.OperatorValue <> boNone) and (not FModel.IsNewNum) then
+    begin
+      if FModel.ExecutePendingOperation(GetDisplayValue, Info) then
       begin
-        if SecondNum = 0 then begin
-          ShowMessage('除數不能為 0');
-          SetDisplayValue(0);
-          FIsNewNum := True;
-          Exit;
-        end;
-        ResultNum := FFirstNum / SecondNum;
+        AppendBinaryHistory(Info);
+        SetDisplayValue(Info.ResultNum);
       end;
+    end;
+    if BtnCaption = '+' then FModel.SetOperator(GetDisplayValue, boAdd)
+    else if BtnCaption = '-' then FModel.SetOperator(GetDisplayValue, boSub)
+    else if (BtnCaption = '×') or (BtnCaption = '*') then FModel.SetOperator(GetDisplayValue, boMul)
+    else if (BtnCaption = '÷') or (BtnCaption = '/') then FModel.SetOperator(GetDisplayValue, boDiv);
+  except
+    on E: Exception do
+      ShowMessage('輸入格式錯誤');
   end;
-  UpdateMemo(FFirstNum, OperatorToText(FOperator), SecondNum, ResultNum);
-  SetDisplayValue(ResultNum);
-  FOperator := boNone;  // 清除運算符號，避免重複按等於造成問題
-  FIsNewNum := True;  // 計算完畢，下次輸入視為新開頭
 end;
 
 procedure TForm1.btnEqualClick(Sender: TObject);
+var
+  Info: TCalcResult;
 begin
-  ExecutePendingOperation;
+  try
+    if FModel.ExecutePendingOperation(GetDisplayValue, Info) then
+    begin
+      AppendBinaryHistory(Info);
+      SetDisplayValue(Info.ResultNum);
+    end;
+  except
+    on E: Exception do
+      ShowMessage(E.Message);
+  end;
 end;
 
 procedure TForm1.btnCClick(Sender: TObject);
 // C 按鈕：全部重置
 begin
   SetDisplayValue(0);
-  FFirstNum := 0;
-  FOperator := boNone;
-  FIsNewNum := False;
+  FModel.Clear;
 end;
 
 procedure TForm1.btnCEClick(Sender: TObject);
@@ -215,7 +189,7 @@ begin
     ResultValue := Func(Value);
     SetDisplayValue(ResultValue);
     UpdateMemoUnary(OpName, Value, ResultValue);
-    FIsNewNum := True;
+    FModel.IsNewNum := True;
   except
     on E: Exception do ShowMessage(E.Message);
   end;
@@ -230,30 +204,25 @@ end;
 procedure TForm1.btnSqrtClick(Sender: TObject);
 //開根號的運算
 begin
-  ApplyUnary('Sqrt', function(x: Double): Double begin if x >= 0 then Result := Sqrt(x)
-
-                                                       else Result := ShowMathError('不能對負數開根號');
-                                                 end);
+  ApplyUnary('Sqrt',FModel.UnarySqrt);
 end;
 
 procedure TForm1.btnSqrClick(Sender: TObject);
 //做平方的運算
 begin
-  ApplyUnary('Sqr', function(x: Double): Double begin Result := x * x; end);
+  ApplyUnary('Sqr', FModel.UnarySqr);
 end;
 
 procedure TForm1.btnFracClick(Sender: TObject);
 //做(1/x)的運算
 begin
-  ApplyUnary('1 /', function(x: Double): Double begin if x <> 0 then Result := 1 / x
-                                                      else Result := ShowMathError('分母不能為零');
-                                                end);
+  ApplyUnary('1 /', FModel.UnaryReciprocal);
 end;
 
 procedure TForm1.btnPctClick(Sender: TObject);
 //做百分百的運算
 begin
-  ApplyUnary('%', function(x: Double): Double begin Result := x / 100; end);
+  ApplyUnary('%', FModel.UnaryPercent);
 end;
 
 procedure TForm1.btnPMClick(Sender: TObject);
@@ -281,6 +250,14 @@ procedure TForm1.UpdateMemo(Num1: Double; Op: string; Num2: Double; Res: Double)
 begin
   // 輸出格式：1 + 2 = 3
   Memo1.Lines.Add(FloatToStr(Num1) + ' ' + Op + ' ' + FloatToStr(Num2) + ' = ' + FloatToStr(Res));
+end;
+
+procedure TForm1.AppendBinaryHistory(const Info: TCalcResult);
+begin
+  Memo1.Lines.Add(FloatToStr(Info.FirstNum) + ' ' +
+                  FModel.OperatorToText(Info.Op) + ' ' +
+                  FloatToStr(Info.SecondNum) + ' = ' +
+                  FloatToStr(Info.ResultNum));
 end;
 
 procedure TForm1.UpdateMemoUnary(Op: string; Num: Double; Res: Double);
