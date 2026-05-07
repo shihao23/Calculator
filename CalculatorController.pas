@@ -14,6 +14,7 @@ type
     function GetDisplayText: string;
     procedure AppendBinaryHistory(const First, Second: Double; const OpText: string; const Result: Double);
     procedure AppendUnaryHistory(const Op: string; const Num: Double; const Res: Double);
+    function ShowMathError(const Msg: string): Double;
   end;
   TCalculatorController = class
   private
@@ -101,7 +102,7 @@ begin
     else if (BtnCaption = '÷') or (BtnCaption = '/') then FModel.SetOperator(CurrentValue, boDiv);
   except
     on E: Exception do
-       raise Exception.Create('輸入格式錯誤');
+       FView.ShowMathError('輸入格式錯誤');
   end;
 end;
 

@@ -8,7 +8,6 @@ uses
   CalculatorController;
 
 type
-
   TForm1 = class(TForm, ICalculatorView)
     btnPct: TButton;
     btnCE: TButton;
@@ -51,28 +50,27 @@ type
     procedure btnPMClick(Sender: TObject);
     procedure btnPctClick(Sender: TObject);
     procedure FormResize(Sender: TObject);
-    function ShowMathError(const Msg: string): Double;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
   private
     { Private declarations }
     FController: TCalculatorController;
-
-    { ===== Display ===== }
-    function GetDisplayValue: Double;
-    procedure SetDisplayValue(const AValue: Double);
-
     { ===== Utility ===== }
     function GetCaption(Sender: TObject): string;
 
+  public
+    { Public declarations }
+    { ===== Display ===== }
+    function GetDisplayValue: Double;
+    procedure SetDisplayValue(const AValue: Double);
     { ===== History ===== }
     procedure AppendBinaryHistory(const First, Second: Double; const OpText: string; const Result: Double);
     procedure AppendUnaryHistory(const Op: string; const Num: Double; const Res: Double);
+
+    { ===== Interface Methods ===== }
     procedure UpdateDisplayText(const AText: string);
     function GetDisplayText: string;
-
-  public
-    { Public declarations }
+    function ShowMathError(const Msg: string): Double;
   end;
 
 var
@@ -81,10 +79,6 @@ var
 implementation
 
 {$R *.dfm}
-
-{ ========================================================= }
-{ Form Lifecycle                                            }
-{ ========================================================= }
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
@@ -95,10 +89,6 @@ procedure TForm1.FormDestroy(Sender: TObject);
 begin
   FController.Free;
 end;
-
-{ ========================================================= }
-{ Display                                                   }
-{ ========================================================= }
 
 function TForm1.GetDisplayValue: Double;
 begin
@@ -121,18 +111,10 @@ begin
   Result := txtResult.Text;
 end;
 
-{ ========================================================= }
-{ Utility                                                   }
-{ ========================================================= }
-
 function TForm1.GetCaption(Sender: TObject): string;
 begin
   Result := (Sender as TButton).Caption;
 end;
-
-{ ========================================================= }
-{ History                                                   }
-{ ========================================================= }
 
 procedure TForm1.AppendBinaryHistory(const First, Second: Double; const OpText: string; const Result: Double);
 begin
@@ -147,19 +129,11 @@ begin
   else Memo1.Lines.Add(Op + '(' + FloatToStr(Num) + ') = ' + FloatToStr(Res));
 end;
 
-{ ========================================================= }
-{ Number Button                                             }
-{ ========================================================= }
-
 procedure TForm1.btnNumberClick(Sender: TObject);
 //根據按鈕的Caption輸出對應的值
 begin
   FController.PressDigit(GetCaption(Sender));
 end;
-
-{ ========================================================= }
-{ Operator Button                                           }
-
 
 procedure TForm1.btnOperatorClick(Sender: TObject);
 //檢查用戶是用加減乘除的哪個
@@ -171,10 +145,6 @@ procedure TForm1.btnEqualClick(Sender: TObject);
 begin
   FController.PressEqual(GetDisplayValue);
 end;
-
-{ ========================================================= }
-{ Clear                                                     }
-{ ========================================================= }
 
 procedure TForm1.btnCClick(Sender: TObject);
 // C 按鈕：全部重置
@@ -193,10 +163,6 @@ procedure TForm1.btnBSClick(Sender: TObject);
 begin
   FController.PressBackspace;
 end;
-
-{ ========================================================= }
-{ Unary Operation                                           }
-{ ========================================================= }
 
 function TForm1.ShowMathError(const Msg: string): Double;
 begin
@@ -229,10 +195,6 @@ procedure TForm1.btnPMClick(Sender: TObject);
 begin
   FController.PMClick(GetDisplayValue);
 end;
-
-{ ========================================================= }
-{ UI                                                        }
-{ ========================================================= }
 
 procedure TForm1.FormResize(Sender: TObject);
 begin
