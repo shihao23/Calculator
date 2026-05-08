@@ -22,17 +22,15 @@ type
   public
     constructor Create;
     procedure Clear;
-
     function OperatorToText(AOp: TBinaryOperator): string;
     procedure SetOperator(const CurrentValue: Double; AOp: TBinaryOperator);
     function ExecutePendingOperation(const CurrentValue: Double; out Info: TCalcResult): Boolean;
     property IsNewNum: Boolean read FIsNewNum write FIsNewNum;
     property OperatorValue: TBinaryOperator read FOperator;
-    function UnarySqrt(x: Double): Double;
-    function UnarySqr(x: Double): Double;
-    function UnaryReciprocal(x: Double): Double;
-    function UnaryPercent(x: Double): Double;
-
+    function UnarySqrt(AValue: Double): Double;
+    function UnarySqr(AValue: Double): Double;
+    function UnaryReciprocal(AValue: Double): Double;
+    function UnaryPercent(AValue: Double): Double;
   end;
 
 implementation
@@ -86,8 +84,7 @@ begin
     boMul: Info.ResultNum := Info.FirstNum * Info.SecondNum;
     boDiv:
       begin
-        if Info.SecondNum = 0 then
-          raise Exception.Create('除數不能為 0');
+        if Info.SecondNum = 0 then raise Exception.Create('除數不能為 0');
         Info.ResultNum := Info.FirstNum / Info.SecondNum;
       end;
   end;
@@ -97,27 +94,25 @@ begin
   FIsNewNum := True;   // 計算完畢，下次輸入視為新開頭
 end;
 
-function TCalculatorEngine.UnarySqrt(x: Double): Double;
+function TCalculatorEngine.UnarySqrt(AValue: Double): Double;
 begin
-  if x < 0 then
-    raise Exception.Create('不能對負數開根號');
-
-  Result := Sqrt(x);
+  if AValue < 0 then raise Exception.Create('不能對負數開根號');
+  Result := Sqrt(AValue);
 end;
 
-function TCalculatorEngine.UnarySqr(x: Double): Double;
+function TCalculatorEngine.UnarySqr(AValue: Double): Double;
 begin
-  Result := x * x;
+  Result := AValue * AValue;
 end;
 
-function TCalculatorEngine.UnaryReciprocal(x: Double): Double;
+function TCalculatorEngine.UnaryReciprocal(AValue: Double): Double;
 begin
-  if x = 0 then raise Exception.Create('分母不能為零');
-  Result := 1 / x;
+  if AValue = 0 then raise Exception.Create('分母不能為零');
+  Result := 1 / AValue;
 end;
 
-function TCalculatorEngine.UnaryPercent(x: Double): Double;
+function TCalculatorEngine.UnaryPercent(AValue: Double): Double;
 begin
-  Result := x / 100;
+  Result := AValue / 100;
 end;
 end.

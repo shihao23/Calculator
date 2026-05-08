@@ -25,7 +25,7 @@ type
     constructor Create(const AView: ICalculatorView);
     destructor Destroy; override;
     procedure PressDigit(ClickedDigit: string);
-    procedure PressOperatorClick(ClickedText1: string; CurrentValue: Double);
+    procedure PressOperatorClick(ClickedCaption: string; CurrentValue: Double);
     procedure PressEqual(CurrentValue: Double);
     procedure PressClearAll;
     procedure PressClearEntry;
@@ -79,14 +79,14 @@ begin
   end else FView.UpdateDisplayText(ClickedText + ClickedDigit);
 end;
 
-procedure TCalculatorController.PressOperatorClick(ClickedText1: string; CurrentValue: Double);
+procedure TCalculatorController.PressOperatorClick(ClickedCaption: string; CurrentValue: Double);
 //檢查用戶是用加減乘除的哪個
 var
   BtnCaption: string;
   Info: TCalcResult;
 begin
   try
-    BtnCaption := ClickedText1;
+    BtnCaption := ClickedCaption;
     if (FModel.OperatorValue <> boNone) and (not FModel.IsNewNum) then
     begin
       if FModel.ExecutePendingOperation(CurrentValue, Info) then
@@ -101,8 +101,7 @@ begin
     else if (BtnCaption = '×') or (BtnCaption = '*') then FModel.SetOperator(CurrentValue, boMul)
     else if (BtnCaption = '÷') or (BtnCaption = '/') then FModel.SetOperator(CurrentValue, boDiv);
   except
-    on E: Exception do
-       FView.ShowMathError('輸入格式錯誤');
+    on E: Exception do FView.ShowMathError(E.Message);
   end;
 end;
 
@@ -117,8 +116,7 @@ begin
       FView.SetDisplayValue(Info.ResultNum);
     end;
   except
-    on E: Exception do
-       raise Exception.Create(E.Message);
+    on E: Exception do FView.ShowMathError(E.Message);
   end;
 end;
 
@@ -159,7 +157,7 @@ begin
     FView.AppendUnaryHistory(OpName, Value, ResultValue);
     FModel.IsNewNum := True;
   except
-    on E: Exception do raise Exception.Create(E.Message);
+    on E: Exception do FView.ShowMathError(E.Message);
   end;
 end;
 

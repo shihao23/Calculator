@@ -125,8 +125,8 @@ end;
 procedure TForm1.AppendUnaryHistory(const Op: string; const Num: Double; const Res: Double);
 begin
   // ¨Ò¦p¡GSqrt(9) = 3
-  if Op = '%' then  Memo1.Lines.Add( '(' + FloatToStr(Num) + ')' + Op + ' = ' + FloatToStr(Res))
-  else Memo1.Lines.Add(Op + '(' + FloatToStr(Num) + ') = ' + FloatToStr(Res));
+  if Op = '%' then  Memo1.Lines.Add(Format('(%g)%s = %g', [Num, Op, Res]))
+  else Memo1.Lines.Add(Format('%s(%g) = %g', [Op, Num, Res]));
 end;
 
 procedure TForm1.btnNumberClick(Sender: TObject);
@@ -174,7 +174,6 @@ procedure TForm1.btnSqrtClick(Sender: TObject);
 begin
   FController.SqrtClick(GetDisplayValue);
 end;
-
 
 procedure TForm1.btnSqrClick(Sender: TObject);
 begin
