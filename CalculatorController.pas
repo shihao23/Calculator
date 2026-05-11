@@ -14,7 +14,7 @@ type
     function GetDisplayText: string;
     procedure AppendBinaryHistory(const First, Second: Double; const OpText: string; const Result: Double);
     procedure AppendUnaryHistory(const Op: string; const Num: Double; const Res: Double);
-    function ShowMathError(const Msg: string): Double;
+    procedure ShowMathError(const Msg: string);
   end;
   TCalculatorController = class
   private
@@ -67,12 +67,12 @@ begin
       FModel.IsNewNum := False;
       Exit;
     end;
-    if Pos('.', ClickedText) > 0 then
-      Exit;
+    //當按'.'，如果已經有小數點就不執行
+    if Pos('.', ClickedText) > 0 then Exit;
     FView.UpdateDisplayText(ClickedText + '.');
     Exit;
   end;
-  //如果是新數字標記 (FIsNewNum) 或者是目前的文字是 '0'，就覆蓋掉
+  //如果是新數字標記 (IsNewNum) 或者是目前的文字是 '0'，就覆蓋掉
   if (ClickedText = '0') or (FModel.IsNewNum) then begin
     FView.UpdateDisplayText(ClickedDigit);
     FModel.IsNewNum := False; // 重置標記，接下來輸入的數字要用串接的
@@ -148,13 +148,12 @@ end;
 
 procedure TCalculatorController.Unary(const OpName: string; Func: TFunc<Double, Double>; CurrentValue: Double);
 var
-  Value, ResultValue: Double;
+  ResultValue: Double;
 begin
   try
-    Value := CurrentValue;
-    ResultValue := Func(Value);
+    ResultValue := Func(CurrentValue);
     FView.SetDisplayValue(ResultValue);
-    FView.AppendUnaryHistory(OpName, Value, ResultValue);
+    FView.AppendUnaryHistory(OpName, CurrentValue, ResultValue);
     FModel.IsNewNum := True;
   except
     on E: Exception do FView.ShowMathError(E.Message);
@@ -187,10 +186,7 @@ end;
 
 procedure TCalculatorController.PMClick(CurrentValue: Double);
 //做正負值的轉換
-var
-  Value: Double;
 begin
-  Value := CurrentValue;
-  FView.SetDisplayValue(-Value);
+  FView.SetDisplayValue(-CurrentValue);
 end;
 end.

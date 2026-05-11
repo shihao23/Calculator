@@ -102,6 +102,8 @@
             <Form>Form1</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="CalculatorController.pas"/>
+        <DCCReference Include="CalculatorEngine.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

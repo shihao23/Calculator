@@ -70,7 +70,7 @@ type
     { ===== Interface Methods ===== }
     procedure UpdateDisplayText(const AText: string);
     function GetDisplayText: string;
-    function ShowMathError(const Msg: string): Double;
+    procedure ShowMathError(const Msg: string);
   end;
 
 var
@@ -164,10 +164,9 @@ begin
   FController.PressBackspace;
 end;
 
-function TForm1.ShowMathError(const Msg: string): Double;
+procedure TForm1.ShowMathError(const Msg: string);
 begin
   Application.MessageBox(PChar(Msg), '錯誤提示', MB_OK + MB_ICONERROR);
-  Result := 0;
 end;
 
 procedure TForm1.btnSqrtClick(Sender: TObject);
@@ -197,7 +196,7 @@ end;
 
 procedure TForm1.FormResize(Sender: TObject);
 begin
-  // 假設視窗寬度大於 600 像素時，就顯示歷史紀錄
+  // 視窗寬度大於 600 像素時，就顯示歷史紀錄
   if Self.Width > 600 then begin
     Panel2.Visible := True;
     Memo1.Visible := True;

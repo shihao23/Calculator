@@ -2,7 +2,9 @@ program Project1;
 
 uses
   Vcl.Forms,
-  Calculator in 'Calculator.pas' {Form1};
+  Calculator in 'Calculator.pas' {Form1},
+  CalculatorController in 'CalculatorController.pas',
+  CalculatorEngine in 'CalculatorEngine.pas';
 
 {$R *.res}
 
