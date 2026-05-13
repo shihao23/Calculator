@@ -71,8 +71,7 @@ function TCalculatorEngine.ExecutePendingOperation(const CurrentValue: Double; o
 begin
 // 防止沒按過運算符號就按等於
   Result := FOperator <> boNone;
-  if not Result then
-    Exit;
+  if not Result then Exit;
 
   Info.FirstNum := FFirstNum;
   Info.SecondNum := CurrentValue;
